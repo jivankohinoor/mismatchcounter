@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mismatch Counter</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Add Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Add configuration system first -->
+    <script src="js/config.js"></script>
+</head>
+<body>
+    <!-- Birthday Preloader with Countdown -->
+    <div id="preloader">
+        <div class="gift-box">
+            <div class="gift-ribbon"></div>
+            <div class="gift-lid"></div>
+        </div>
+        <div class="countdown-container">
+            <div id="countdown">Loading countdown...</div>
+        </div>
+        <div class="countdown-message">
+            <p id="countdown-text">A special gift for a special day!</p>
+            <p id="countdown-date">Please wait until the special date to open...</p>
+        </div>
+        <div class="unlock-section">
+            <input type="password" class="unlock-input" id="unlock-code" placeholder="Secret code..." aria-label="Secret unlock code">
+            <button class="unlock-button" id="unlock-button" aria-label="Unlock the app">Unlock</button>
+        </div>
+    </div>
+    
+    <!-- Birthday Celebration Message -->
+    <div id="birthday-message" class="birthday-message" role="dialog" aria-labelledby="birthday-title">
+        <h2 id="birthday-title">🎉 Happy Birthday! 🎂</h2>
+        <p id="birthday-text">On this special day, I wanted to create something unique just for you!</p>
+        <button class="birthday-button" id="birthday-button" aria-label="Open your gift">Open Your Gift!</button>
+    </div>
+    
+    <div class="container" role="main">
+        <header>
+            <h1 id="app-title">Mismatch Counter <span id="app-icon" class="cat-icon">🐱</span></h1>
+            <p id="app-subtitle">A little app to track all the silly things I do</p>
+            <button id="config-toggle" class="config-btn" aria-label="Customize app">⚙️ Customize</button>
+        </header>
+        
+        <!-- Configuration Panel -->
+        <div id="config-panel" class="config-panel">
+            <h2>Customize Your Mismatch Counter</h2>
+            
+            <div class="config-tabs">
+                <div class="config-tab active" data-tab="basic">Basic Info</div>
+                <div class="config-tab" data-tab="appearance">Appearance</div>
+                <div class="config-tab" data-tab="templates">Templates</div>
+                <div class="config-tab" data-tab="messages">Messages</div>
+                <div class="config-tab" data-tab="import-export">Import/Export</div>
+            </div>
+            
+            <div class="config-section active" id="basic-config">
+                <div class="config-group">
+                    <label for="recipient-name">Recipient Name:</label>
+                    <input type="text" id="recipient-name" class="config-input" placeholder="Name of the person receiving this gift">
+                </div>
+                
+                <div class="config-group">
+                    <label for="recipient-relationship">Relationship:</label>
+                    <input type="text" id="recipient-relationship" class="config-input" placeholder="e.g., wife, husband, friend, etc.">
+                </div>
+                
+                <div class="config-group">
+                    <label for="sender-name">Your Name/Title:</label>
+                    <input type="text" id="sender-name" class="config-input" placeholder="How you want to be referred to">
+                </div>
+                
+                <div class="config-group">
+                    <label for="birthday-date">Special Date:</label>
+                    <input type="datetime-local" id="birthday-date" class="config-input">
+                </div>
+                
+                <div class="config-group">
+                    <label for="secret-code">Secret Unlock Code:</label>
+                    <input type="text" id="secret-code" class="config-input" placeholder="Code to unlock before the special date">
+                </div>
+            </div>
+            
+            <div class="config-section" id="appearance-config">
+                <div class="config-group">
+                    <label for="main-color">Main Color:</label>
+                    <input type="color" id="main-color" class="color-picker">
+                </div>
+                
+                <div class="config-group">
+                    <label for="secondary-color">Secondary Color:</label>
+                    <input type="color" id="secondary-color" class="color-picker">
+                </div>
+                
+                <div class="config-group">
+                    <label for="background-color">Background Color:</label>
+                    <input type="color" id="background-color" class="color-picker">
+                </div>
+                
+                <div class="config-group">
+                    <label for="icon-emoji">Icon Emoji:</label>
+                    <select id="icon-emoji" class="config-input">
+                        <option value="🐱">🐱 Cat</option>
+                        <option value="🐶">🐶 Dog</option>
+                        <option value="❤️">❤️ Heart</option>
+                        <option value="🎁">🎁 Gift</option>
+                        <option value="🌟">🌟 Star</option>
+                        <option value="🏠">🏠 House</option>
+                        <option value="🍕">🍕 Pizza</option>
+                        <option value="🎮">🎮 Game</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="config-section" id="templates-config">
+                <h3>Select a Counter Template</h3>
+                
+                <div id="romantic-template" class="relationship-template selected" data-template="romantic">
+                    <h4>Romantic Partner</h4>
+                    <p>Counters for couples, spouses, and romantic relationships</p>
+                </div>
+                
+                <div id="roommates-template" class="relationship-template" data-template="roommates">
+                    <h4>Roommates</h4>
+                    <p>Counters for living together and sharing a home</p>
+                </div>
+                
+                <div id="friends-template" class="relationship-template" data-template="friends">
+                    <h4>Friends</h4>
+                    <p>Counters for friendship and social relationships</p>
+                </div>
+                
+                <div id="family-template" class="relationship-template" data-template="family">
+                    <h4>Family</h4>
+                    <p>Counters for family relationships</p>
+                </div>
+            </div>
+            
+            <div class="config-section" id="messages-config">
+                <div class="config-group">
+                    <label for="birthday-title-text">Birthday Title:</label>
+                    <input type="text" id="birthday-title-text" class="config-input">
+                </div>
+                
+                <div class="config-group">
+                    <label for="birthday-message-text">Birthday Message:</label>
+                    <textarea id="birthday-message-text" class="config-input" rows="4"></textarea>
+                </div>
+                
+                <div class="config-group">
+                    <label for="footer-message">Footer Message:</label>
+                    <input type="text" id="footer-message" class="config-input">
+                </div>
+                
+                <div class="config-group">
+                    <label for="countdown-message">Countdown Message:</label>
+                    <input type="text" id="countdown-message" class="config-input">
+                </div>
+            </div>
+            
+            <div class="config-section" id="import-export-config">
+                <div class="config-group">
+                    <h3>Export Configuration</h3>
+                    <p>Download your current configuration as a JSON file:</p>
+                    <button id="export-config" class="export-btn">Export Configuration</button>
+                </div>
+                
+                <div class="config-group">
+                    <h3>Import Configuration</h3>
+                    <p>Import a previously saved configuration:</p>
+                    <input type="file" id="import-file" accept=".json">
+                    <button id="import-config" class="import-btn">Import Configuration</button>
+                </div>
+            </div>
+            
+            <div class="config-actions">
+                <button id="save-config" class="save-btn">Save Changes</button>
+                <button id="cancel-config" class="cancel-btn">Cancel</button>
+                <button id="reset-config" class="reset-btn">Reset to Defaults</button>
+            </div>
+        </div>
+        
+        <div class="love-messages-container" aria-live="polite">
+            <div id="randomLoveMessage" class="love-message">
+                Loading a sweet message...
+            </div>
+        </div>
+        
+        <div class="counter-section">
+            <h2>Mismatch Counters <span id="counter-icon" class="cat-icon">🐾</span></h2>
+            <div id="counters-container" role="list">
+                <!-- Counters will be added here dynamically -->
+            </div>
+            
+            <div class="add-counter">
+                <h3>Add New Mismatch Counter</h3>
+                <div class="counter-form">
+                    <input type="text" id="new-counter-name" placeholder="Enter a new mismatch to track..." aria-label="New counter name">
+                    <select id="new-counter-threshold" aria-label="Select threshold limit">
+                        <option value="0">No limit</option>
+                        <option value="3">Limit: 3</option>
+                        <option value="5">Limit: 5</option>
+                        <option value="10">Limit: 10</option>
+                    </select>
+                    <button id="add-counter-btn" aria-label="Add new counter">Add New Counter</button>
+                </div>
+            </div>
+            
+            <div class="weekly-stats">
+                <h3>Weekly Statistics</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="week-total">0</div>
+                        <div class="stat-label">Total Mismatches<br>This Week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="week-worst">None</div>
+                        <div class="stat-label">Most Frequent<br>Mismatch</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="perfect-days">0</div>
+                        <div class="stat-label">Perfect Days<br>This Week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="average-daily">0</div>
+                        <div class="stat-label">Average Daily<br>Mismatches</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- History Section -->
+            <div class="mismatch-history">
+                <h3 class="history-title">Mismatch History</h3>
+                <div class="history-tabs">
+                    <div class="history-tab active" data-tab="week">This Week</div>
+                    <div class="history-tab" data-tab="month">Monthly</div>
+                    <div class="history-tab" data-tab="all">All Time</div>
+                </div>
+                <div class="tab-content active" id="week-tab">
+                    <div class="chart-container">
+                        <canvas id="week-chart" height="200"></canvas>
+                    </div>
+                </div>
+                <div class="tab-content" id="month-tab">
+                    <div class="chart-container">
+                        <canvas id="month-chart" height="200"></canvas>
+                    </div>
+                </div>
+                <div class="tab-content" id="all-tab">
+                    <div class="chart-container">
+                        <canvas id="all-chart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p id="footer-text">Made with <span style="color: var(--main-color);">❤️</span> for a special day</p>
+            <button id="reset-all-btn" class="reset-btn" aria-label="Reset all counters">Reset All Counters</button>
+            <button id="clear-storage-btn" class="reset-btn" aria-label="Clear storage" style="margin-left: 10px;">Clear Storage & Reset</button>
+        </div>
+    </div>
+    
+    <!-- App modules -->
+    <script src="js/config.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/birthday.js"></script>
+    <script src="js/config-ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
