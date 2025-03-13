@@ -7,6 +7,9 @@ import MessagesList from './MessagesList';
 import themePresets from '../utils/themePresets';
 import counterTemplates from '../utils/counterTemplates';
 import '../styles/configPanel.css';
+import ThemeIcon from './ThemeIcon';
+import IconSelector from './IconSelector';
+import FontSelector from './FontSelector';
 
 const ConfigPanel = ({ isVisible, onClose }) => {
   const { config, saveConfig, resetConfig } = useConfig();
@@ -30,8 +33,8 @@ const ConfigPanel = ({ isVisible, onClose }) => {
       mainColor: '#ff69b4',
       secondaryColor: '#4682b4',
       backgroundColor: '#fff0f5',
-      iconEmoji: '🐱',
-      fontFamily: "'Comic Sans MS', cursive, sans-serif"
+      iconName: 'Heart',
+      fontFamily: "'Poppins', sans-serif"
     },
     messages: {
       birthdayTitle: '',
@@ -64,8 +67,8 @@ const ConfigPanel = ({ isVisible, onClose }) => {
           mainColor: config.theme?.mainColor || '#ff69b4',
           secondaryColor: config.theme?.secondaryColor || '#4682b4',
           backgroundColor: config.theme?.backgroundColor || '#fff0f5',
-          iconEmoji: config.theme?.iconEmoji || '🐱',
-          fontFamily: config.theme?.fontFamily || "'Comic Sans MS', cursive, sans-serif"
+          iconName: config.theme?.iconName || 'Heart',
+          fontFamily: config.theme?.fontFamily || "'Poppins', sans-serif"
         },
         messages: {
           birthdayTitle: config.messages?.birthdayTitle || '',
@@ -384,25 +387,30 @@ const ConfigPanel = ({ isVisible, onClose }) => {
               </div>
               
               <div className="form-group">
-                <label htmlFor="iconEmoji">Emoji de l'icône :</label>
-                <select
-                  id="iconEmoji"
-                  name="theme.iconEmoji"
-                  value={formData.theme.iconEmoji}
-                  onChange={handleChange}
-                >
-                  <option value="🐱">🐱 Chat</option>
-                  <option value="🐶">🐶 Chien</option>
-                  <option value="❤️">❤️ Cœur</option>
-                  <option value="🎁">🎁 Cadeau</option>
-                  <option value="🌟">🌟 Étoile</option>
-                  <option value="🏠">🏠 Maison</option>
-                  <option value="🍕">🍕 Pizza</option>
-                  <option value="🎮">🎮 Jeu</option>
-                  <option value="🌙">🌙 Lune</option>
-                  <option value="🌿">🌿 Plante</option>
-                </select>
+                <IconSelector
+                  value={formData.theme.iconName}
+                  onChange={(value) => setFormData(prev => ({
+                    ...prev,
+                    theme: {
+                      ...prev.theme,
+                      iconName: value
+                    }
+                  }))}
+                />
               </div>
+            </div>
+            
+            <div className="form-group">
+              <FontSelector
+                value={formData.theme.fontFamily}
+                onChange={(value) => setFormData(prev => ({
+                  ...prev,
+                  theme: {
+                    ...prev.theme,
+                    fontFamily: value
+                  }
+                }))}
+              />
             </div>
           </div>
           

@@ -217,7 +217,7 @@ export const ConfigProvider = ({ children }) => {
     document.documentElement.style.setProperty('--background-color', theme.backgroundColor);
     document.documentElement.style.setProperty('--font-family', theme.fontFamily);
     
-    // Apply animations based on settings
+    // Appliquer les animations basées sur les paramètres
     if (config.advanced && config.advanced.enableAnimations === false) {
       document.documentElement.style.setProperty('--transition-speed', '0s');
       document.documentElement.style.setProperty('--animation-duration', '0s');

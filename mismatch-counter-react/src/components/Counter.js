@@ -1,6 +1,7 @@
 import React from 'react';
 import { useConfig } from '../contexts/ConfigContext';
 import { useData } from '../contexts/DataContext';
+import { PlusCircle, RotateCcw, Trash2, AlertTriangle } from 'lucide-react';
 
 const Counter = ({ name, counter }) => {
   const { config } = useConfig();
@@ -91,7 +92,7 @@ const Counter = ({ name, counter }) => {
           aria-label={`Increment ${counter.name}`}
           onClick={handleIncrement}
         >
-          +1
+          <PlusCircle size={20} />
         </button>
         
         <button 
@@ -99,7 +100,7 @@ const Counter = ({ name, counter }) => {
           aria-label={`Delete ${counter.name} counter`}
           onClick={handleDelete}
         >
-          🗑️
+          <Trash2 size={20} />
         </button>
         
         {/* Reset/Forgive button if count > 0 */}
@@ -109,7 +110,7 @@ const Counter = ({ name, counter }) => {
             aria-label={`Forgive ${counter.name}`}
             onClick={handleReset}
           >
-            Forgive
+            <RotateCcw size={20} />
           </button>
         )}
       </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import themePresets from '../utils/themePresets';
+import ThemeIcon, { getThemeIcon } from './ThemeIcon';
 
 const ThemePreview = ({ currentTheme, previewTheme, onApplyTheme, onRevertTheme }) => {
   // Déterminer quel thème afficher (prévisualisation ou actuel)
@@ -9,59 +10,65 @@ const ThemePreview = ({ currentTheme, previewTheme, onApplyTheme, onRevertTheme 
   const previewStyle = {
     backgroundColor: displayTheme.backgroundColor,
     color: displayTheme.mainColor,
-    border: `2px solid ${displayTheme.secondaryColor}`,
     fontFamily: displayTheme.fontFamily,
-    padding: '15px',
-    borderRadius: '8px',
-    marginBottom: '15px'
   };
   
   const headerStyle = {
     color: displayTheme.secondaryColor,
-    marginTop: '0'
   };
   
+  // Récupérer l'icône du thème
+  const IconComponent = getThemeIcon(displayTheme.iconName);
+  
   return (
-    <div className="theme-preview-container">
-      <h3>Prévisualisation du thème</h3>
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold">Prévisualisation du thème</h3>
       
-      <div style={previewStyle} className="theme-preview">
-        <h4 style={headerStyle}>
-          {displayTheme.iconEmoji} Exemple d'affichage
-        </h4>
-        <p>Ceci est un aperçu de votre thème sélectionné.</p>
-        <div style={{ 
-          backgroundColor: displayTheme.mainColor, 
-          color: 'white',
-          padding: '5px 10px',
-          borderRadius: '4px',
-          display: 'inline-block'
-        }}>
-          Bouton exemple
+      <div 
+        className="p-6 rounded-lg shadow-md mb-6" 
+        style={previewStyle}
+      >
+        <div className="flex items-center mb-3" style={headerStyle}>
+          <IconComponent size={24} color={displayTheme.secondaryColor} />
+          <h4 className="ml-2 text-lg font-semibold" style={headerStyle}>
+            Exemple d'affichage
+          </h4>
         </div>
+        <p className="mb-4">Ceci est un aperçu de votre thème sélectionné.</p>
+        <button 
+          className="px-4 py-2 rounded transition-colors duration-200"
+          style={{
+            backgroundColor: displayTheme.mainColor,
+            color: 'white'
+          }}
+        >
+          Bouton exemple
+        </button>
       </div>
       
-      <div className="theme-presets">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
         {Object.keys(themePresets).map(presetName => (
           <button 
             key={presetName}
             type="button" 
             onClick={() => onApplyTheme(themePresets[presetName])}
+            className="flex items-center justify-center p-3 rounded-md transition-transform duration-200 hover:-translate-y-1 hover:shadow-md"
             style={{
               backgroundColor: themePresets[presetName].mainColor,
               color: 'white',
-              border: '1px solid ' + themePresets[presetName].secondaryColor
+              border: `1px solid ${themePresets[presetName].secondaryColor}`
             }}
           >
-            {themePresets[presetName].iconEmoji} {presetName}
+            <ThemeIcon name={themePresets[presetName].iconName} size={18} />
+            <span className="ml-2 capitalize">{presetName}</span>
           </button>
         ))}
       </div>
       
-      <div className="theme-actions">
+      <div className="flex space-x-3 mt-4">
         <button 
           type="button" 
-          className="apply-theme-btn"
+          className="bg-green-500 text-white px-4 py-2 rounded-md transition-colors hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
           onClick={() => onApplyTheme(displayTheme)}
           disabled={!previewTheme}
         >
@@ -69,7 +76,7 @@ const ThemePreview = ({ currentTheme, previewTheme, onApplyTheme, onRevertTheme 
         </button>
         <button 
           type="button" 
-          className="revert-theme-btn"
+          className="bg-red-500 text-white px-4 py-2 rounded-md transition-colors hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
           onClick={onRevertTheme}
           disabled={!previewTheme}
         >

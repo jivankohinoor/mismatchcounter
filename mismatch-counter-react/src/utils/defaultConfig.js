@@ -25,8 +25,8 @@ const defaultConfig = {
     mainColor: "#ff69b4",
     secondaryColor: "#4682b4",
     backgroundColor: "#fff0f5",
-    fontFamily: "'Comic Sans MS', cursive, sans-serif",
-    iconEmoji: "🐱"
+    fontFamily: "'Poppins', sans-serif",
+    iconName: "Heart"
   },
   
   // Custom messages

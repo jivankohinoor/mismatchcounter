@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .config-panel {
+    @apply fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center;
+  }
+
+  .config-panel-content {
+    @apply bg-white w-11/12 max-w-4xl max-h-[90vh] rounded-xl shadow-xl overflow-y-auto p-6 relative;
+  }
+
+  .close-config-btn {
+    @apply absolute top-4 right-4 bg-transparent border-none text-2xl cursor-pointer text-gray-400 transition-colors hover:text-gray-700;
+  }
+
+  .config-tabs {
+    @apply flex flex-wrap mb-5 border-b border-gray-200 gap-1;
+  }
+
+  .config-tab {
+    @apply px-4 py-2 rounded-t-lg border border-transparent bg-gray-100 cursor-pointer font-medium transition-all relative -mb-px hover:bg-gray-200;
+  }
+
+  .config-tab.active {
+    @apply bg-white border-gray-200 border-b-white text-gray-800;
+  }
+
+  .config-section {
+    @apply hidden p-5 bg-white rounded mb-5;
+  }
+
+  .config-section.active {
+    @apply block;
+  }
+
+  .config-section h3 {
+    @apply mt-0 text-lg font-semibold text-gray-800 border-b border-gray-100 pb-3 mb-4;
+  }
+
+  .form-group {
+    @apply mb-5;
+  }
+
+  .form-group label {
+    @apply block mb-2 font-medium text-gray-700 text-sm;
+  }
+
+  .form-input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500;
+  }
+
+  .form-color {
+    @apply w-full h-10 border-none rounded cursor-pointer;
+  }
+
+  .theme-presets-grid {
+    @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-3;
+  }
+
+  .theme-preset-button {
+    @apply flex items-center justify-center p-3 rounded-md transition-transform duration-200 hover:-translate-y-1 hover:shadow-md;
+  }
+
+  .relationship-templates {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4;
+  }
+
+  .relationship-template {
+    @apply p-4 border border-gray-200 rounded-lg cursor-pointer transition-all hover:-translate-y-1 hover:shadow-md bg-white;
+  }
+
+  .relationship-template.selected {
+    @apply border-pink-500 ring-2 ring-pink-500 ring-opacity-50;
+  }
+
+  .relationship-template h4 {
+    @apply mt-0 mb-2 text-gray-800;
+  }
+
+  .relationship-template p {
+    @apply text-sm text-gray-600 mt-0;
+  }
+
+  .template-preview {
+    @apply my-2 text-sm text-gray-500;
+  }
+
+  .template-counter {
+    @apply mb-1;
+  }
+
+  .template-counter-more {
+    @apply italic text-xs;
+  }
+
+  .apply-template-btn {
+    @apply bg-pink-500 text-white border-none px-3 py-1 rounded cursor-pointer text-sm mt-2 transition-colors hover:bg-pink-600;
+  }
+
+  .messages-list-container {
+    @apply mt-6;
+  }
+
+  .messages-list-container h4 {
+    @apply text-base font-semibold mb-2;
+  }
+
+  .message-list {
+    @apply mb-4 max-h-48 overflow-y-auto border border-gray-200 rounded p-3;
+  }
+
+  .message-item {
+    @apply flex justify-between items-center p-2 border-b border-gray-100;
+  }
+
+  .message-item:last-child {
+    @apply border-b-0;
+  }
+
+  .message-text {
+    @apply flex-1 pr-3;
+  }
+
+  .remove-message-btn {
+    @apply bg-transparent border-none text-red-500 cursor-pointer text-lg opacity-70 transition-opacity hover:opacity-100;
+  }
+
+  .add-message-form {
+    @apply flex gap-2;
+  }
+
+  .add-message-form input {
+    @apply flex-1 px-3 py-2 border border-gray-300 rounded-md;
+  }
+
+  .add-message-btn {
+    @apply px-3 py-2 bg-pink-500 text-white border-none rounded cursor-pointer transition-colors hover:bg-pink-600;
+  }
+
+  .config-actions {
+    @apply flex justify-center gap-4 mt-8 pt-5 border-t border-gray-100;
+  }
+
+  .save-config-btn {
+    @apply px-5 py-2 bg-green-500 text-white border-none rounded-md cursor-pointer font-medium transition-all hover:-translate-y-0.5 hover:shadow-md hover:bg-green-600;
+  }
+
+  .cancel-btn {
+    @apply px-5 py-2 bg-gray-500 text-white border-none rounded-md cursor-pointer font-medium transition-all hover:-translate-y-0.5 hover:shadow-md hover:bg-gray-600;
+  }
+
+  .export-btn {
+    @apply px-4 py-2 bg-blue-500 text-white border-none rounded cursor-pointer transition-colors hover:bg-blue-600;
+  }
+
+  .reset-btn {
+    @apply px-4 py-2 bg-red-500 text-white border-none rounded cursor-pointer transition-colors hover:bg-red-600;
+  }
+} 
