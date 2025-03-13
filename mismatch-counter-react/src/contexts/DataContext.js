@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useConfig } from './ConfigContext';
+import profiles from '../utils/profiles';
 
 // Create a context for the data
 export const DataContext = createContext();
@@ -26,9 +27,11 @@ export const DataProvider = ({ children }) => {
   const initializeData = () => {
     try {
       setIsLoading(true);
-      loadFromStorage();
+      const hasLoadedFromStorage = loadFromStorage();
       
-      if (counters.length === 0) {
+      // Si aucun compteur n'a été chargé depuis le localStorage ou s'ils sont vides,
+      // initialiser avec les compteurs par défaut du template sélectionné
+      if (!hasLoadedFromStorage || counters.length === 0) {
         initializeDefaultCounters();
       }
       
@@ -57,13 +60,11 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  // Initialize with default counters from config
+  // Initialize with default counters from profiles
   const initializeDefaultCounters = () => {
     const today = getTodayDateString();
-    // Use the default counters directly from the config's counterTemplates
-    const defaultCounters = config.counterTemplates ? 
-      config.counterTemplates[config.selectedTemplate || 'romantic'] || [] : 
-      [];
+    // Use the profile counters for the selected template, or default to romantic
+    const defaultCounters = profiles[config.selectedTemplate || 'romantic'] || [];
     
     const newCounters = defaultCounters.map(counter => ({
       name: counter.name,
@@ -109,8 +110,14 @@ export const DataProvider = ({ children }) => {
       const savedCounters = localStorage.getItem('mismatchAppCounters');
       const savedStats = localStorage.getItem('mismatchAppWeeklyStats');
       
+      let hasLoadedCounters = false;
+      
       if (savedCounters) {
-        setCounters(JSON.parse(savedCounters));
+        const parsedCounters = JSON.parse(savedCounters);
+        if (Array.isArray(parsedCounters) && parsedCounters.length > 0) {
+          setCounters(parsedCounters);
+          hasLoadedCounters = true;
+        }
       }
       
       if (savedStats) {
@@ -122,7 +129,8 @@ export const DataProvider = ({ children }) => {
           perfectDays: 0
         });
       }
-      return true;
+      
+      return hasLoadedCounters;
     } catch (e) {
       console.error("Error loading from localStorage: ", e);
       return false;
@@ -428,8 +436,38 @@ export const DataProvider = ({ children }) => {
 
   // Fonction pour initialiser les compteurs avec un template
   const initializeCounters = (templateCounters) => {
-    setCounters([...templateCounters]);
-    localStorage.setItem('mismatch_counters', JSON.stringify(templateCounters));
+    const today = getTodayDateString();
+    
+    // Formater correctement les compteurs avec leurs propriétés
+    const formattedCounters = templateCounters.map(counter => ({
+      name: counter.name,
+      count: 0,
+      threshold: counter.threshold,
+      lastIncrement: null,
+      lastReset: today,
+      events: []
+    }));
+    
+    // Mettre à jour les compteurs dans l'état
+    setCounters(formattedCounters);
+    
+    // Mettre à jour le localStorage avec la bonne clé
+    localStorage.setItem('mismatchAppCounters', JSON.stringify(formattedCounters));
+    
+    // Mettre à jour les statistiques hebdomadaires
+    const currentWeekStart = getStartOfWeek();
+    setWeeklyStats({
+      startDate: currentWeekStart,
+      counts: {},
+      perfectDays: 0
+    });
+    
+    // Sauvegarder aussi les statistiques
+    localStorage.setItem('mismatchAppWeeklyStats', JSON.stringify({
+      startDate: currentWeekStart,
+      counts: {},
+      perfectDays: 0
+    }));
   };
 
   return (

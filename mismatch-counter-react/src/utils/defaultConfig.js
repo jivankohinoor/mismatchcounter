@@ -22,9 +22,9 @@ const defaultConfig = {
   
   // Theme settings
   theme: {
-    mainColor: "#ff69b4",
-    secondaryColor: "#4682b4",
-    backgroundColor: "#fff0f5",
+    mainColor: "#FF4B91",
+    secondaryColor: "#6499E9",
+    backgroundColor: "#FFF2F5",
     fontFamily: "'Poppins', sans-serif",
     iconName: "Heart"
   },
@@ -68,69 +68,14 @@ const defaultConfig = {
       "Time for a special treat! 🎁"
     ],
     
-    birthdayTitle: "🎉 Happy Birthday! 🎂",
+    birthdayTitle: "🎉 Happy Birthday, My Love! 🎂",
     birthdayMessage: "On this special day, I wanted to create something unique just for you! This little app will help you keep track of all my silly mismatches, but more importantly, it's a reminder of how much I love you, even with all my imperfections! I hope your day is as wonderful as you are! 💕",
     footerMessage: "Made with ❤️ for your special day",
     countdownMessage: "A special gift for your Birthday!"
   },
   
-  // Default counter templates
-  counterTemplates: {
-    romantic: [
-      { name: "Left the dishwasher door open", threshold: 5 },
-      { name: "Put the wrong knives in the dishwasher", threshold: 3 },
-      { name: "Forgot to call whomever I was supposed to call", threshold: 3 },
-      { name: "Didn't clean my mess before going to bed", threshold: 1 },
-      { name: "Didn't empty the pet litter box", threshold: 2 },
-      { name: "Didn't take out the trash", threshold: 1 },
-      { name: "Didn't put the vacuum cleaner away", threshold: 5 },
-      { name: "Yelled for no reason", threshold: 3 },
-      { name: "Got mad for no reason", threshold: 3 },
-      { name: "Talked about work too much", threshold: 5 }
-    ],
-    
-    roommates: [
-      { name: "Left dishes in the sink", threshold: 3 },
-      { name: "Didn't pay bills on time", threshold: 1 },
-      { name: "Forgot to buy shared groceries", threshold: 2 },
-      { name: "Hogged the bathroom", threshold: 3 },
-      { name: "Left lights on when not home", threshold: 5 },
-      { name: "Had friends over without asking", threshold: 2 },
-      { name: "Played music too loud", threshold: 3 },
-      { name: "Didn't clean common areas", threshold: 2 },
-      { name: "Used roommate's stuff without asking", threshold: 1 },
-      { name: "Didn't take out trash when full", threshold: 2 }
-    ],
-    
-    friends: [
-      { name: "Showed up late", threshold: 3 },
-      { name: "Cancelled plans last minute", threshold: 2 },
-      { name: "Forgot important date", threshold: 1 },
-      { name: "Didn't respond to messages", threshold: 3 },
-      { name: "Borrowed something and didn't return", threshold: 2 },
-      { name: "Spilled a secret", threshold: 1 },
-      { name: "Said something thoughtless", threshold: 2 },
-      { name: "Forgot to bring what I promised", threshold: 3 },
-      { name: "Made a bad joke", threshold: 10 },
-      { name: "Left you with the bill", threshold: 1 }
-    ],
-    
-    family: [
-      { name: "Forgot family event", threshold: 2 },
-      { name: "Didn't call when promised", threshold: 3 },
-      { name: "Didn't help with chores", threshold: 3 },
-      { name: "Left a mess in common areas", threshold: 4 },
-      { name: "Used the last of something without replacing", threshold: 3 },
-      { name: "Borrowed without asking", threshold: 2 },
-      { name: "Forgot to feed pets", threshold: 1 },
-      { name: "Was grumpy for no reason", threshold: 5 },
-      { name: "Spent too much time on phone", threshold: 4 },
-      { name: "Forgot to pass on messages", threshold: 2 }
-    ]
-  },
-  
-  // Selected template (used at initialization)
-  selectedTemplate: "romantic",
+  // Selected template (profiles will be loaded from the profiles directory)
+  selectedTemplate: 'romantic',
   
   // Advanced settings
   advanced: {

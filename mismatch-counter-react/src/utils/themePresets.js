@@ -1,60 +1,60 @@
 // Theme presets for the application
 const themePresets = {
-  "pink": {
-    mainColor: "#ff69b4",
-    secondaryColor: "#4682b4", 
-    backgroundColor: "#fff0f5",
+  "rose": {
+    mainColor: "#FF4B91",
+    secondaryColor: "#6499E9", 
+    backgroundColor: "#FFF2F5",
     fontFamily: "'Poppins', sans-serif",
     iconName: "Heart"
   },
-  "blue": {
-    mainColor: "#4682b4",
-    secondaryColor: "#ff69b4",
-    backgroundColor: "#f0f8ff",
+  "ocean": {
+    mainColor: "#3AA1AA",
+    secondaryColor: "#FF6969",
+    backgroundColor: "#F0F9FA",
     fontFamily: "'Montserrat', sans-serif",
-    iconName: "Star"
+    iconName: "Droplets"
   },
-  "dark": {
-    mainColor: "#9370db",
-    secondaryColor: "#20b2aa",
-    backgroundColor: "#2c2c2c",
+  "midnight": {
+    mainColor: "#845EC2",
+    secondaryColor: "#00C9A7",
+    backgroundColor: "#2B2D42",
     fontFamily: "'Inter', sans-serif",
     iconName: "Moon"
   },
-  "nature": {
-    mainColor: "#228B22",
-    secondaryColor: "#DAA520",
-    backgroundColor: "#F5F5DC",
+  "forest": {
+    mainColor: "#4CAF50",
+    secondaryColor: "#FF9800",
+    backgroundColor: "#F5F7F2",
     fontFamily: "'Nunito', sans-serif",
     iconName: "Leaf"
   },
   "sunset": {
-    mainColor: "#FF5733",
-    secondaryColor: "#C70039",
-    backgroundColor: "#FFC300",
+    mainColor: "#FF6B6B",
+    secondaryColor: "#4ECDC4",
+    backgroundColor: "#FFF7E8",
     fontFamily: "'Quicksand', sans-serif",
-    iconName: "Sunset"
+    iconName: "Sun"
   },
   "elegant": {
-    mainColor: "#6A0572",
-    secondaryColor: "#AB83A1",
+    mainColor: "#7F5283",
+    secondaryColor: "#D09CFA",
     backgroundColor: "#F8F9FA",
     fontFamily: "'Playfair Display', serif",
     iconName: "Crown"
   },
   "playful": {
-    mainColor: "#FF6B6B",
-    secondaryColor: "#4ECDC4",
-    backgroundColor: "#FFF7F7",
+    mainColor: "#FF9A8B",
+    secondaryColor: "#93E1D8",
+    backgroundColor: "#FFF7F6",
     fontFamily: "'Pacifico', cursive",
-    iconName: "Sparkles"
+    iconName: "Star"
   },
   "minimal": {
-    mainColor: "#333333",
-    secondaryColor: "#666666",
+    mainColor: "#404258",
+    secondaryColor: "#6B728E",
     backgroundColor: "#F9F9F9",
     fontFamily: "'Inter', sans-serif",
-    iconName: "Plus"
+    iconName: "Minimize"
   }
 };
 

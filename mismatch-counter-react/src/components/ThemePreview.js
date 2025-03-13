@@ -9,12 +9,39 @@ const ThemePreview = ({ currentTheme, previewTheme, onApplyTheme, onRevertTheme 
   // Générer un style pour la prévisualisation basé sur le thème
   const previewStyle = {
     backgroundColor: displayTheme.backgroundColor,
-    color: displayTheme.mainColor,
+    color: "#333333",
     fontFamily: displayTheme.fontFamily,
+    transition: "all 0.3s ease",
   };
   
   const headerStyle = {
     color: displayTheme.secondaryColor,
+    borderBottom: `2px solid ${displayTheme.mainColor}20`,
+    paddingBottom: "0.5rem",
+    marginBottom: "1rem"
+  };
+  
+  const buttonStyle = {
+    backgroundColor: displayTheme.mainColor,
+    color: 'white',
+    borderRadius: "0.375rem",
+    padding: "0.5rem 1rem",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    border: "none",
+    fontSize: "0.875rem",
+  };
+  
+  const secondaryButtonStyle = {
+    backgroundColor: displayTheme.secondaryColor,
+    color: 'white',
+    borderRadius: "0.375rem",
+    padding: "0.5rem 1rem",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    border: "none",
+    marginLeft: "0.5rem",
+    fontSize: "0.875rem",
   };
   
   // Récupérer l'icône du thème
@@ -22,37 +49,60 @@ const ThemePreview = ({ currentTheme, previewTheme, onApplyTheme, onRevertTheme 
   
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold">Prévisualisation du thème</h3>
+      <h3 className="text-lg font-semibold mb-4">Prévisualisation du thème</h3>
       
       <div 
         className="p-6 rounded-lg shadow-md mb-6" 
         style={previewStyle}
       >
-        <div className="flex items-center mb-3" style={headerStyle}>
+        <div className="flex items-center mb-4" style={headerStyle}>
           <IconComponent size={24} color={displayTheme.secondaryColor} />
-          <h4 className="ml-2 text-lg font-semibold" style={headerStyle}>
+          <h4 className="ml-2 text-xl font-semibold" style={{ color: displayTheme.secondaryColor }}>
             Exemple d'affichage
           </h4>
         </div>
-        <p className="mb-4">Ceci est un aperçu de votre thème sélectionné.</p>
-        <button 
-          className="px-4 py-2 rounded transition-colors duration-200"
-          style={{
-            backgroundColor: displayTheme.mainColor,
-            color: 'white'
-          }}
-        >
-          Bouton exemple
-        </button>
+        
+        <p className="mb-4" style={{ fontSize: "0.9rem", lineHeight: "1.5" }}>
+          Ce panneau montre un aperçu de votre thème actuel avec la police <strong>{displayTheme.fontFamily.split(',')[0].replace(/'/g, '')}</strong>.
+        </p>
+        
+        <div className="mb-4 p-3 rounded-md" style={{ backgroundColor: `${displayTheme.mainColor}15` }}>
+          <div className="flex items-center">
+            <ThemeIcon name="Info" size={18} color={displayTheme.mainColor} />
+            <span className="ml-2" style={{ color: displayTheme.mainColor, fontWeight: "500" }}>
+              Information importante
+            </span>
+          </div>
+          <p className="mt-2 text-sm">
+            Les couleurs, polices et icônes sont personnalisables selon vos préférences.
+          </p>
+        </div>
+        
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex items-center">
+            <ThemeIcon name="Check" size={18} color={displayTheme.secondaryColor} />
+            <span className="ml-2 text-sm">Thème appliqué</span>
+          </div>
+          
+          <div className="flex">
+            <button style={buttonStyle}>
+              Bouton principal
+            </button>
+            <button style={secondaryButtonStyle}>
+              Option
+            </button>
+          </div>
+        </div>
       </div>
       
+      <h4 className="font-medium text-base mb-2">Thèmes prédéfinis</h4>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
         {Object.keys(themePresets).map(presetName => (
           <button 
             key={presetName}
             type="button" 
             onClick={() => onApplyTheme(themePresets[presetName])}
-            className="flex items-center justify-center p-3 rounded-md transition-transform duration-200 hover:-translate-y-1 hover:shadow-md"
+            className="flex flex-col items-center p-3 rounded-md transition-transform duration-200 hover:-translate-y-1 hover:shadow-md"
             style={{
               backgroundColor: themePresets[presetName].mainColor,
               color: 'white',
@@ -60,7 +110,7 @@ const ThemePreview = ({ currentTheme, previewTheme, onApplyTheme, onRevertTheme 
             }}
           >
             <ThemeIcon name={themePresets[presetName].iconName} size={18} />
-            <span className="ml-2 capitalize">{presetName}</span>
+            <span className="mt-1 capitalize text-sm">{presetName}</span>
           </button>
         ))}
       </div>
@@ -76,7 +126,7 @@ const ThemePreview = ({ currentTheme, previewTheme, onApplyTheme, onRevertTheme 
         </button>
         <button 
           type="button" 
-          className="bg-red-500 text-white px-4 py-2 rounded-md transition-colors hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="bg-gray-500 text-white px-4 py-2 rounded-md transition-colors hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
           onClick={onRevertTheme}
           disabled={!previewTheme}
         >

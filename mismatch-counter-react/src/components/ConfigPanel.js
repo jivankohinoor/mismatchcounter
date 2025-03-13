@@ -5,7 +5,7 @@ import ThemePreview from './ThemePreview';
 import CounterTemplateSelector from './CounterTemplateSelector';
 import MessagesList from './MessagesList';
 import themePresets from '../utils/themePresets';
-import counterTemplates from '../utils/counterTemplates';
+import profiles from '../utils/profiles';
 import '../styles/configPanel.css';
 import ThemeIcon from './ThemeIcon';
 import IconSelector from './IconSelector';
@@ -133,10 +133,17 @@ const ConfigPanel = ({ isVisible, onClose }) => {
   
   // Gérer la sélection de modèle
   const handleTemplateChange = (template) => {
+    // Mettre à jour le formData
     setFormData(prev => ({
       ...prev,
       selectedTemplate: template
     }));
+    
+    // Mettre à jour immédiatement la configuration pour que d'autres composants puissent y accéder
+    saveConfig({
+      ...config,
+      selectedTemplate: template
+    });
   };
   
   // Ajouter un message d'amour

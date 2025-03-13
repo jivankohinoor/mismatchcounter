@@ -24,6 +24,20 @@ export const BirthdayProvider = ({ children }) => {
     const now = new Date().getTime();
     return now >= new Date(config.recipient?.birthdayDate).getTime();
   };
+  
+  // Check if today is the exact birthday date (same day, same month)
+  const isExactBirthdayDate = () => {
+    if (!config.recipient?.birthdayDate) return false;
+    
+    const birthday = new Date(config.recipient.birthdayDate);
+    const today = new Date();
+    
+    return (
+      birthday.getDate() === today.getDate() &&
+      birthday.getMonth() === today.getMonth() &&
+      birthday.getFullYear() <= today.getFullYear()
+    );
+  };
 
   // Update countdown timer
   const updateCountdown = () => {
@@ -51,10 +65,12 @@ export const BirthdayProvider = ({ children }) => {
     // Hide preloader countdown
     setShowPreloader(false);
     
-    // Show birthday message
+    // Show birthday message only on the exact day of the birthday
     setTimeout(() => {
-      setShowBirthdayMessage(true);
-      createConfetti();
+      if (isExactBirthdayDate()) {
+        setShowBirthdayMessage(true);
+        createConfetti();
+      }
     }, 1000);
   };
 
@@ -87,7 +103,7 @@ export const BirthdayProvider = ({ children }) => {
 
   // Check birthday status
   const checkBirthdayStatus = () => {
-    if (isBirthdayOrAfter()) {
+    if (isExactBirthdayDate()) {
       showBirthdayCelebration();
     } else {
       // Start countdown timer
@@ -125,11 +141,13 @@ export const BirthdayProvider = ({ children }) => {
       value={{
         showPreloader,
         showBirthdayMessage,
+        setShowBirthdayMessage,
         countdownText,
         unlockCode,
         handleUnlockCodeChange,
         tryUnlock,
-        handleBirthdayButtonClick
+        handleBirthdayButtonClick,
+        isExactBirthdayDate
       }}
     >
       {children}

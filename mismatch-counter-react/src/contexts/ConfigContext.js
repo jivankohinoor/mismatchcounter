@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import defaultConfig from '../utils/defaultConfig';
+import profiles from '../utils/profiles';
 
 // Create a context for the configuration
 export const ConfigContext = createContext();
@@ -270,7 +271,7 @@ export const ConfigProvider = ({ children }) => {
 
   // Get default counters based on selected template
   const getDefaultCounters = () => {
-    return config.counterTemplates[config.selectedTemplate] || config.counterTemplates.romantic;
+    return profiles[config.selectedTemplate] || profiles.romantic;
   };
 
   // Add a custom love message
