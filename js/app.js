@@ -21,9 +21,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize theme preview for configuration UI
     ConfigUI.initializeThemePreview();
     
+    // Create advanced settings UI
+    ConfigUI.createAdvancedSettingsUI();
+    
     // Check birthday status
     BirthdayManager.checkBirthdayStatus(config);
     
-    // Set up message rotation interval
-    setInterval(MismatchUI.displayRandomLoveMessage, 10000);
+    // Set up message rotation interval using the configured interval
+    let messageInterval = config.advanced && config.advanced.randomMessageInterval ? 
+        config.advanced.randomMessageInterval : 10000;
+    
+    setInterval(MismatchUI.displayRandomLoveMessage, messageInterval);
+    
+    // Set up auto-save if configured
+    if (config.advanced && config.advanced.autoSaveInterval > 0) {
+        ConfigManager.setupAutoSave(config.advanced.autoSaveInterval);
+    }
+    
+    // Log debug message if debug mode is enabled
+    if (config.advanced && config.advanced.debugMode) {
+        console.log("Mismatch Counter App initialized with config:", config);
+    }
 });
