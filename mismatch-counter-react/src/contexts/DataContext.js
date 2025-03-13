@@ -426,6 +426,12 @@ export const DataProvider = ({ children }) => {
     return { labels, data };
   };
 
+  // Fonction pour initialiser les compteurs avec un template
+  const initializeCounters = (templateCounters) => {
+    setCounters([...templateCounters]);
+    localStorage.setItem('mismatch_counters', JSON.stringify(templateCounters));
+  };
+
   return (
     <DataContext.Provider 
       value={{
@@ -443,7 +449,8 @@ export const DataProvider = ({ children }) => {
         getWeeklyStats,
         getChartData,
         daysBetween,
-        getTodayDateString
+        getTodayDateString,
+        initializeCounters
       }}
     >
       {children}

@@ -4,6 +4,7 @@ import { DataProvider } from './contexts/DataContext';
 import { BirthdayProvider } from './contexts/BirthdayContext';
 import MismatchApp from './components/MismatchApp';
 import './styles/styles.css';
+import './styles/configPanel.css';
 
 function App() {
   return (

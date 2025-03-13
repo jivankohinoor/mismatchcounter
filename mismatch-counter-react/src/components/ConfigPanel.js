@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useConfig } from '../contexts/ConfigContext';
+import { useData } from '../contexts/DataContext';
+import ThemePreview from './ThemePreview';
+import CounterTemplateSelector from './CounterTemplateSelector';
+import MessagesList from './MessagesList';
+import themePresets from '../utils/themePresets';
+import counterTemplates from '../utils/counterTemplates';
+import '../styles/configPanel.css';
 
 const ConfigPanel = ({ isVisible, onClose }) => {
   const { config, saveConfig, resetConfig } = useConfig();
+  const { initializeCounters } = useData();
+  
+  // Onglets de configuration
   const [activeTab, setActiveTab] = useState('basic');
   
-  // Local state for form values
+  // État local pour les valeurs du formulaire
   const [formData, setFormData] = useState({
     recipient: {
       name: '',
@@ -31,58 +41,13 @@ const ConfigPanel = ({ isVisible, onClose }) => {
       footerMessage: '',
       countdownMessage: ''
     },
-    selectedTemplate: 'romantic',
-    counterTemplates: {
-      romantic: [],
-      roommates: [],
-      friends: [],
-      family: []
-    },
-    advanced: {
-      randomMessageInterval: 10000,
-      enableAnimations: true,
-      debugMode: false,
-      autoSaveInterval: 60000
-    }
+    selectedTemplate: 'romantic'
   });
   
-  // Temporary state for message being edited
-  const [newMessage, setNewMessage] = useState('');
-  const [newConsequence, setNewConsequence] = useState('');
-
-  // Predefined themes
-  const themePresets = {
-    "pink": {
-      mainColor: "#ff69b4",
-      secondaryColor: "#4682b4", 
-      backgroundColor: "#fff0f5",
-      fontFamily: "'Comic Sans MS', cursive, sans-serif",
-      iconEmoji: "🐱"
-    },
-    "blue": {
-      mainColor: "#4682b4",
-      secondaryColor: "#ff69b4",
-      backgroundColor: "#f0f8ff",
-      fontFamily: "'Arial', sans-serif",
-      iconEmoji: "🐶"
-    },
-    "dark": {
-      mainColor: "#9370db",
-      secondaryColor: "#20b2aa",
-      backgroundColor: "#2c2c2c",
-      fontFamily: "'Courier New', monospace",
-      iconEmoji: "🌙"
-    },
-    "nature": {
-      mainColor: "#228B22",
-      secondaryColor: "#DAA520",
-      backgroundColor: "#F5F5DC",
-      fontFamily: "'Georgia', serif",
-      iconEmoji: "🌿"
-    }
-  };
+  // État pour la prévisualisation du thème
+  const [previewTheme, setPreviewTheme] = useState(null);
   
-  // Initialize form with current config
+  // Initialiser le formulaire avec la configuration actuelle
   useEffect(() => {
     if (config) {
       setFormData({
@@ -110,45 +75,42 @@ const ConfigPanel = ({ isVisible, onClose }) => {
           footerMessage: config.messages?.footerMessage || '',
           countdownMessage: config.messages?.countdownMessage || ''
         },
-        selectedTemplate: config.selectedTemplate || 'romantic',
-        counterTemplates: config.counterTemplates || {
-          romantic: [],
-          roommates: [],
-          friends: [],
-          family: []
-        },
-        advanced: {
-          randomMessageInterval: config.advanced?.randomMessageInterval || 10000,
-          enableAnimations: config.advanced?.enableAnimations !== false,
-          debugMode: config.advanced?.debugMode || false,
-          autoSaveInterval: config.advanced?.autoSaveInterval || 60000
-        }
+        selectedTemplate: config.selectedTemplate || 'romantic'
       });
     }
   }, [config]);
   
-  // Handle tab changes
+  // Gérer les changements d'onglets
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
   
-  // Apply a theme preset
-  const applyThemePreset = (presetName) => {
-    if (themePresets[presetName]) {
+  // Gérer les changements de prévisualisation de thème
+  const handlePreviewTheme = (theme) => {
+    setPreviewTheme(theme);
+  };
+  
+  // Appliquer le thème en prévisualisation
+  const handleApplyTheme = () => {
+    if (previewTheme) {
       setFormData(prev => ({
         ...prev,
-        theme: {
-          ...themePresets[presetName]
-        }
+        theme: { ...previewTheme }
       }));
+      setPreviewTheme(null);
     }
   };
   
-  // Handle form input changes
+  // Annuler la prévisualisation du thème
+  const handleRevertTheme = () => {
+    setPreviewTheme(null);
+  };
+  
+  // Gérer les changements de formulaire
   const handleChange = (e) => {
     const { name, value } = e.target;
     
-    // Handle nested properties with dot notation
+    // Gérer les propriétés imbriquées avec la notation par points
     if (name.includes('.')) {
       const [section, field] = name.split('.');
       setFormData(prev => ({
@@ -166,43 +128,27 @@ const ConfigPanel = ({ isVisible, onClose }) => {
     }
   };
   
-  // Handle checkbox changes
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    
-    if (name.includes('.')) {
-      const [section, field] = name.split('.');
-      setFormData(prev => ({
-        ...prev,
-        [section]: {
-          ...prev[section],
-          [field]: checked
-        }
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: checked
-      }));
-    }
+  // Gérer la sélection de modèle
+  const handleTemplateChange = (template) => {
+    setFormData(prev => ({
+      ...prev,
+      selectedTemplate: template
+    }));
   };
   
-  // Add a new love message
-  const addMessage = () => {
-    if (newMessage.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        messages: {
-          ...prev.messages,
-          loveMessages: [...prev.messages.loveMessages, newMessage.trim()]
-        }
-      }));
-      setNewMessage('');
-    }
+  // Ajouter un message d'amour
+  const addLoveMessage = (message) => {
+    setFormData(prev => ({
+      ...prev,
+      messages: {
+        ...prev.messages,
+        loveMessages: [...prev.messages.loveMessages, message]
+      }
+    }));
   };
   
-  // Remove a love message
-  const removeMessage = (index) => {
+  // Supprimer un message d'amour
+  const removeLoveMessage = (index) => {
     setFormData(prev => ({
       ...prev,
       messages: {
@@ -212,21 +158,18 @@ const ConfigPanel = ({ isVisible, onClose }) => {
     }));
   };
   
-  // Add a new consequence
-  const addConsequence = () => {
-    if (newConsequence.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        messages: {
-          ...prev.messages,
-          consequences: [...prev.messages.consequences, newConsequence.trim()]
-        }
-      }));
-      setNewConsequence('');
-    }
+  // Ajouter une conséquence
+  const addConsequence = (consequence) => {
+    setFormData(prev => ({
+      ...prev,
+      messages: {
+        ...prev.messages,
+        consequences: [...prev.messages.consequences, consequence]
+      }
+    }));
   };
   
-  // Remove a consequence
+  // Supprimer une conséquence
   const removeConsequence = (index) => {
     setFormData(prev => ({
       ...prev,
@@ -237,15 +180,7 @@ const ConfigPanel = ({ isVisible, onClose }) => {
     }));
   };
   
-  // Handle template selection
-  const handleTemplateChange = (template) => {
-    setFormData(prev => ({
-      ...prev,
-      selectedTemplate: template
-    }));
-  };
-  
-  // Handle form submission
+  // Gérer la soumission du formulaire
   const handleSubmit = (e) => {
     e.preventDefault();
     saveConfig({
@@ -255,7 +190,7 @@ const ConfigPanel = ({ isVisible, onClose }) => {
     if (onClose) onClose();
   };
   
-  // Export configuration as JSON
+  // Exporter la configuration en JSON
   const handleExportConfig = () => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
     const downloadAnchorNode = document.createElement('a');
@@ -266,7 +201,7 @@ const ConfigPanel = ({ isVisible, onClose }) => {
     downloadAnchorNode.remove();
   };
   
-  // Handle file import
+  // Gérer l'importation de fichier
   const handleImportConfig = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -276,33 +211,32 @@ const ConfigPanel = ({ isVisible, onClose }) => {
       try {
         const importedConfig = JSON.parse(e.target.result);
         saveConfig(importedConfig);
-        alert("Configuration imported successfully!");
+        alert("Configuration importée avec succès !");
       } catch (error) {
-        alert("Failed to import configuration: " + error.message);
+        alert("Échec de l'importation : " + error.message);
       }
     };
     reader.readAsText(file);
   };
   
-  // Handle config reset
+  // Réinitialiser la configuration
   const handleResetConfig = () => {
-    if (window.confirm("Are you sure you want to reset to default configuration? This cannot be undone.")) {
+    if (window.confirm("Êtes-vous sûr de vouloir réinitialiser la configuration par défaut ? Cette action est irréversible.")) {
       resetConfig();
       if (onClose) onClose();
     }
   };
   
-  // Handle panel visibility
+  // Si le panneau n'est pas visible, ne rien afficher
   if (!isVisible) return null;
   
   return (
     <div className="config-panel">
       <div className="config-panel-content">
-        <h2>Customize Your App</h2>
+        <h2>Personnalisez votre application</h2>
         <button 
           className="close-config-btn"
           onClick={onClose}
-          aria-label="Close configuration panel"
         >
           &times;
         </button>
@@ -312,19 +246,19 @@ const ConfigPanel = ({ isVisible, onClose }) => {
             className={`config-tab ${activeTab === 'basic' ? 'active' : ''}`} 
             onClick={() => handleTabChange('basic')}
           >
-            Basic Info
+            Informations
           </button>
           <button 
             className={`config-tab ${activeTab === 'appearance' ? 'active' : ''}`} 
             onClick={() => handleTabChange('appearance')}
           >
-            Appearance
+            Apparence
           </button>
           <button 
             className={`config-tab ${activeTab === 'templates' ? 'active' : ''}`} 
             onClick={() => handleTabChange('templates')}
           >
-            Templates
+            Modèles
           </button>
           <button 
             className={`config-tab ${activeTab === 'messages' ? 'active' : ''}`} 
@@ -338,19 +272,14 @@ const ConfigPanel = ({ isVisible, onClose }) => {
           >
             Import/Export
           </button>
-          <button 
-            className={`config-tab ${activeTab === 'advanced' ? 'active' : ''}`} 
-            onClick={() => handleTabChange('advanced')}
-          >
-            Advanced
-          </button>
         </div>
         
         <form onSubmit={handleSubmit}>
+          {/* Section Informations de base */}
           <div className={`config-section ${activeTab === 'basic' ? 'active' : ''}`}>
-            <h3>Basic Settings</h3>
+            <h3>Informations de base</h3>
             <div className="form-group">
-              <label htmlFor="recipientName">Recipient's Name:</label>
+              <label htmlFor="recipientName">Nom du destinataire :</label>
               <input
                 type="text"
                 id="recipientName"
@@ -362,19 +291,19 @@ const ConfigPanel = ({ isVisible, onClose }) => {
             </div>
             
             <div className="form-group">
-              <label htmlFor="recipientRelationship">Relationship:</label>
+              <label htmlFor="recipientRelationship">Relation :</label>
               <input
                 type="text"
                 id="recipientRelationship"
                 name="recipient.relationship"
                 value={formData.recipient.relationship}
                 onChange={handleChange}
-                placeholder="e.g., wife, husband, friend, etc."
+                placeholder="ex. conjointe, mari, ami, etc."
               />
             </div>
             
             <div className="form-group">
-              <label htmlFor="senderName">Your Name/Title:</label>
+              <label htmlFor="senderName">Votre nom :</label>
               <input
                 type="text"
                 id="senderName"
@@ -386,7 +315,7 @@ const ConfigPanel = ({ isVisible, onClose }) => {
             </div>
             
             <div className="form-group">
-              <label htmlFor="birthdayDate">Special Date:</label>
+              <label htmlFor="birthdayDate">Date spéciale :</label>
               <input
                 type="date"
                 id="birthdayDate"
@@ -397,263 +326,178 @@ const ConfigPanel = ({ isVisible, onClose }) => {
             </div>
             
             <div className="form-group">
-              <label htmlFor="secretCode">Secret Unlock Code:</label>
+              <label htmlFor="secretCode">Code secret de déverrouillage :</label>
               <input
                 type="text"
                 id="secretCode"
                 name="recipient.secretCode"
                 value={formData.recipient.secretCode}
                 onChange={handleChange}
-                placeholder="Code to unlock before the special date"
+                placeholder="Code pour déverrouiller avant la date spéciale"
               />
             </div>
           </div>
           
+          {/* Section Apparence */}
           <div className={`config-section ${activeTab === 'appearance' ? 'active' : ''}`}>
-            <h3>Appearance</h3>
-            <div className="form-group">
-              <label>Theme Presets:</label>
-              <div className="theme-presets">
-                <button type="button" onClick={() => applyThemePreset('pink')}>Pink Theme</button>
-                <button type="button" onClick={() => applyThemePreset('blue')}>Blue Theme</button>
-                <button type="button" onClick={() => applyThemePreset('dark')}>Dark Theme</button>
-                <button type="button" onClick={() => applyThemePreset('nature')}>Nature Theme</button>
+            <h3>Apparence</h3>
+            
+            <ThemePreview 
+              currentTheme={formData.theme}
+              previewTheme={previewTheme}
+              onApplyTheme={handlePreviewTheme}
+              onRevertTheme={handleRevertTheme}
+            />
+            
+            <div className="manual-color-inputs">
+              <div className="form-group">
+                <label htmlFor="mainColor">Couleur principale :</label>
+                <input
+                  type="color"
+                  id="mainColor"
+                  name="theme.mainColor"
+                  value={formData.theme.mainColor}
+                  onChange={handleChange}
+                />
               </div>
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="mainColor">Main Color:</label>
-              <input
-                type="color"
-                id="mainColor"
-                name="theme.mainColor"
-                value={formData.theme.mainColor}
-                onChange={handleChange}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="secondaryColor">Secondary Color:</label>
-              <input
-                type="color"
-                id="secondaryColor"
-                name="theme.secondaryColor"
-                value={formData.theme.secondaryColor}
-                onChange={handleChange}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="backgroundColor">Background Color:</label>
-              <input
-                type="color"
-                id="backgroundColor"
-                name="theme.backgroundColor"
-                value={formData.theme.backgroundColor}
-                onChange={handleChange}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="iconEmoji">Icon Emoji:</label>
-              <select
-                id="iconEmoji"
-                name="theme.iconEmoji"
-                value={formData.theme.iconEmoji}
-                onChange={handleChange}
-              >
-                <option value="🐱">🐱 Cat</option>
-                <option value="🐶">🐶 Dog</option>
-                <option value="❤️">❤️ Heart</option>
-                <option value="🎁">🎁 Gift</option>
-                <option value="🌟">🌟 Star</option>
-                <option value="🏠">🏠 House</option>
-                <option value="🍕">🍕 Pizza</option>
-                <option value="🎮">🎮 Game</option>
-                <option value="🌙">🌙 Moon</option>
-                <option value="🌿">🌿 Plant</option>
-              </select>
+              
+              <div className="form-group">
+                <label htmlFor="secondaryColor">Couleur secondaire :</label>
+                <input
+                  type="color"
+                  id="secondaryColor"
+                  name="theme.secondaryColor"
+                  value={formData.theme.secondaryColor}
+                  onChange={handleChange}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="backgroundColor">Couleur de fond :</label>
+                <input
+                  type="color"
+                  id="backgroundColor"
+                  name="theme.backgroundColor"
+                  value={formData.theme.backgroundColor}
+                  onChange={handleChange}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="iconEmoji">Emoji de l'icône :</label>
+                <select
+                  id="iconEmoji"
+                  name="theme.iconEmoji"
+                  value={formData.theme.iconEmoji}
+                  onChange={handleChange}
+                >
+                  <option value="🐱">🐱 Chat</option>
+                  <option value="🐶">🐶 Chien</option>
+                  <option value="❤️">❤️ Cœur</option>
+                  <option value="🎁">🎁 Cadeau</option>
+                  <option value="🌟">🌟 Étoile</option>
+                  <option value="🏠">🏠 Maison</option>
+                  <option value="🍕">🍕 Pizza</option>
+                  <option value="🎮">🎮 Jeu</option>
+                  <option value="🌙">🌙 Lune</option>
+                  <option value="🌿">🌿 Plante</option>
+                </select>
+              </div>
             </div>
           </div>
           
+          {/* Section Templates */}
           <div className={`config-section ${activeTab === 'templates' ? 'active' : ''}`}>
-            <h3>Counter Templates</h3>
-            <p>Select a set of default counters based on your relationship:</p>
-            
-            <div className="relationship-templates">
-              <div 
-                className={`relationship-template ${formData.selectedTemplate === 'romantic' ? 'selected' : ''}`}
-                onClick={() => handleTemplateChange('romantic')}
-              >
-                <h4>Romantic Partner</h4>
-                <p>Counters for couples, spouses, and romantic relationships</p>
-              </div>
-              
-              <div 
-                className={`relationship-template ${formData.selectedTemplate === 'roommates' ? 'selected' : ''}`}
-                onClick={() => handleTemplateChange('roommates')}
-              >
-                <h4>Roommates</h4>
-                <p>Counters for living together and sharing a home</p>
-              </div>
-              
-              <div 
-                className={`relationship-template ${formData.selectedTemplate === 'friends' ? 'selected' : ''}`}
-                onClick={() => handleTemplateChange('friends')}
-              >
-                <h4>Friends</h4>
-                <p>Counters for friendship and social relationships</p>
-              </div>
-              
-              <div 
-                className={`relationship-template ${formData.selectedTemplate === 'family' ? 'selected' : ''}`}
-                onClick={() => handleTemplateChange('family')}
-              >
-                <h4>Family</h4>
-                <p>Counters for family relationships</p>
-              </div>
-            </div>
+            <CounterTemplateSelector
+              selectedTemplate={formData.selectedTemplate}
+              onSelectTemplate={handleTemplateChange}
+            />
           </div>
           
+          {/* Section Messages */}
           <div className={`config-section ${activeTab === 'messages' ? 'active' : ''}`}>
             <h3>Messages</h3>
             <div className="form-group">
-              <label htmlFor="birthdayTitle">Birthday Title:</label>
+              <label htmlFor="birthdayTitle">Titre pour l'anniversaire :</label>
               <input
                 type="text"
                 id="birthdayTitle"
                 name="messages.birthdayTitle"
                 value={formData.messages.birthdayTitle}
                 onChange={handleChange}
-                placeholder="e.g., Happy Birthday!"
+                placeholder="ex. Joyeux Anniversaire !"
               />
             </div>
             
             <div className="form-group">
-              <label htmlFor="birthdayMessage">Birthday Message:</label>
+              <label htmlFor="birthdayMessage">Message d'anniversaire :</label>
               <textarea
                 id="birthdayMessage"
                 name="messages.birthdayMessage"
                 value={formData.messages.birthdayMessage}
                 onChange={handleChange}
                 rows="3"
-                placeholder="Enter your special birthday message here"
+                placeholder="Entrez votre message spécial d'anniversaire ici"
               ></textarea>
             </div>
             
             <div className="form-group">
-              <label htmlFor="footerMessage">Footer Message:</label>
+              <label htmlFor="footerMessage">Message de pied de page :</label>
               <input
                 type="text"
                 id="footerMessage"
                 name="messages.footerMessage"
                 value={formData.messages.footerMessage}
                 onChange={handleChange}
-                placeholder="Message to display in the footer"
+                placeholder="Message à afficher dans le pied de page"
               />
             </div>
             
             <div className="form-group">
-              <label htmlFor="countdownMessage">Countdown Message:</label>
+              <label htmlFor="countdownMessage">Message de compte à rebours :</label>
               <input
                 type="text"
                 id="countdownMessage"
                 name="messages.countdownMessage"
                 value={formData.messages.countdownMessage}
                 onChange={handleChange}
-                placeholder="Message to display during countdown"
+                placeholder="Message à afficher pendant le compte à rebours"
               />
             </div>
             
-            <h4>Love Messages</h4>
-            <div className="love-messages-list">
-              {formData.messages.loveMessages.map((message, index) => (
-                <div key={index} className="message-item">
-                  <span className="message-text">{message}</span>
-                  <button 
-                    type="button" 
-                    className="remove-message-btn"
-                    onClick={() => removeMessage(index)}
-                    aria-label="Remove this message"
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))}
-            </div>
+            <MessagesList 
+              messages={formData.messages.loveMessages}
+              onAddMessage={addLoveMessage}
+              onRemoveMessage={removeLoveMessage}
+              type="loveMessages"
+            />
             
-            <div className="add-message-form">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Enter a new love message"
-                aria-label="New love message"
-              />
-              <button 
-                type="button" 
-                onClick={addMessage}
-                className="add-message-btn"
-                aria-label="Add new message"
-              >
-                Add Love Message
-              </button>
-            </div>
-            
-            <h4>Consequences</h4>
-            <p>Messages shown when a counter threshold is exceeded:</p>
-            <div className="love-messages-list">
-              {formData.messages.consequences.map((consequence, index) => (
-                <div key={index} className="message-item">
-                  <span className="message-text">{consequence}</span>
-                  <button 
-                    type="button" 
-                    className="remove-message-btn"
-                    onClick={() => removeConsequence(index)}
-                    aria-label="Remove this consequence"
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))}
-            </div>
-            
-            <div className="add-message-form">
-              <input
-                type="text"
-                value={newConsequence}
-                onChange={(e) => setNewConsequence(e.target.value)}
-                placeholder="Enter a new consequence"
-                aria-label="New consequence"
-              />
-              <button 
-                type="button" 
-                onClick={addConsequence}
-                className="add-message-btn"
-                aria-label="Add new consequence"
-              >
-                Add Consequence
-              </button>
-            </div>
+            <MessagesList 
+              messages={formData.messages.consequences}
+              onAddMessage={addConsequence}
+              onRemoveMessage={removeConsequence}
+              type="consequences"
+            />
           </div>
           
+          {/* Section Import/Export */}
           <div className={`config-section ${activeTab === 'import-export' ? 'active' : ''}`}>
             <h3>Import & Export</h3>
             <div className="form-group">
-              <h4>Export Configuration</h4>
-              <p>Download your current configuration as a JSON file:</p>
+              <h4>Exporter la configuration</h4>
+              <p>Téléchargez votre configuration actuelle sous forme de fichier JSON :</p>
               <button 
                 type="button" 
                 className="export-btn" 
                 onClick={handleExportConfig}
               >
-                Export Configuration
+                Exporter la configuration
               </button>
             </div>
             
             <div className="form-group">
-              <h4>Import Configuration</h4>
-              <p>Import a previously saved configuration:</p>
+              <h4>Importer une configuration</h4>
+              <p>Importez une configuration préalablement sauvegardée :</p>
               <input 
                 type="file" 
                 id="import-file" 
@@ -663,66 +507,15 @@ const ConfigPanel = ({ isVisible, onClose }) => {
             </div>
             
             <div className="form-group">
-              <h4>Reset Configuration</h4>
-              <p>Reset all settings to default values:</p>
+              <h4>Réinitialiser la configuration</h4>
+              <p>Réinitialiser tous les paramètres aux valeurs par défaut :</p>
               <button 
                 type="button" 
                 className="reset-btn" 
                 onClick={handleResetConfig}
               >
-                Reset to Defaults
+                Réinitialiser
               </button>
-            </div>
-          </div>
-          
-          <div className={`config-section ${activeTab === 'advanced' ? 'active' : ''}`}>
-            <h3>Advanced Settings</h3>
-            <div className="form-group">
-              <label htmlFor="randomMessageInterval">Random Message Interval (ms):</label>
-              <input
-                type="number"
-                id="randomMessageInterval"
-                name="advanced.randomMessageInterval"
-                value={formData.advanced.randomMessageInterval}
-                onChange={handleChange}
-                min="1000"
-                step="1000"
-              />
-            </div>
-            
-            <div className="form-group checkbox-group">
-              <input
-                type="checkbox"
-                id="enableAnimations"
-                name="advanced.enableAnimations"
-                checked={formData.advanced.enableAnimations}
-                onChange={handleCheckboxChange}
-              />
-              <label htmlFor="enableAnimations">Enable Animations</label>
-            </div>
-            
-            <div className="form-group checkbox-group">
-              <input
-                type="checkbox"
-                id="debugMode"
-                name="advanced.debugMode"
-                checked={formData.advanced.debugMode}
-                onChange={handleCheckboxChange}
-              />
-              <label htmlFor="debugMode">Debug Mode</label>
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="autoSaveInterval">Auto-Save Interval (ms):</label>
-              <input
-                type="number"
-                id="autoSaveInterval"
-                name="advanced.autoSaveInterval"
-                value={formData.advanced.autoSaveInterval}
-                onChange={handleChange}
-                min="10000"
-                step="10000"
-              />
             </div>
           </div>
           
@@ -731,14 +524,14 @@ const ConfigPanel = ({ isVisible, onClose }) => {
               type="submit" 
               className="save-config-btn"
             >
-              Save Changes
+              Enregistrer les changements
             </button>
             <button 
               type="button" 
               className="cancel-btn"
               onClick={onClose}
             >
-              Cancel
+              Annuler
             </button>
           </div>
         </form>
