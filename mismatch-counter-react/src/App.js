@@ -15,6 +15,9 @@ import './styles/styles.css';
 import './styles/configPanel.tailwind.css';
 import './styles/mobile.css';
 
+// New layout improvements
+import './styles/layout-improvements.css';
+
 function App() {
   return (
     <ConfigProvider>

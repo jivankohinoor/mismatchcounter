@@ -66,17 +66,16 @@ const Counter = ({ name, counter }) => {
       role="listitem"
       aria-label={`Mismatch counter: ${name}`}
     >
-      {/* Threshold Warning Badge */}
-      {counter.threshold > 0 && (
-        <div 
-          className={`threshold-warning ${counter.count >= counter.threshold ? 'threshold-exceeded' : ''}`}
-        >
-          Limit: {counter.threshold}
-        </div>
-      )}
-      
       {/* Counter Details */}
       <div className="counter-details">
+        {/* Threshold Warning Badge */}
+        {counter.threshold > 0 && (
+          <div 
+            className={`threshold-warning ${counter.count >= counter.threshold ? 'threshold-exceeded' : ''}`}
+          >
+            Limit: {counter.threshold}
+          </div>
+        )}
         <span className="counter-name">{counter.name}</span>
         <span className="counter-stats">
           {daysWithoutMistake} {daysWithoutMistake === 1 ? 'day' : 'days'} without mistake
@@ -91,28 +90,33 @@ const Counter = ({ name, counter }) => {
           className="increment-btn" 
           aria-label={`Increment ${counter.name}`}
           onClick={handleIncrement}
+          type="button"
         >
-          <PlusCircle size={20} />
+          <PlusCircle size={18} />
         </button>
         
         <button 
           className="delete-btn" 
           aria-label={`Delete ${counter.name} counter`}
           onClick={handleDelete}
+          type="button"
         >
-          <Trash2 size={20} />
+          <Trash2 size={18} />
         </button>
         
-        {/* Reset/Forgive button if count > 0 */}
-        {counter.count > 0 && (
-          <button 
-            className="forgive-btn" 
-            aria-label={`Forgive ${counter.name}`}
-            onClick={handleReset}
-          >
-            <RotateCcw size={20} />
-          </button>
-        )}
+        {/* Reserve space for Reset button even when not visible */}
+        <div className="reset-btn-container" style={{ width: '36px', height: '36px', display: 'inline-flex', justifyContent: 'center', alignItems: 'center' }}>
+          {counter.count > 0 && (
+            <button 
+              className="forgive-btn" 
+              aria-label={`Forgive ${counter.name}`}
+              onClick={handleReset}
+              type="button"
+            >
+              <RotateCcw size={18} />
+            </button>
+          )}
+        </div>
       </div>
       
       {/* Consequence Alert if threshold is exceeded */}

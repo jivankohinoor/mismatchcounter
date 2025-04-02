@@ -32,6 +32,7 @@ const AddCounterForm = () => {
           aria-label="New counter name"
           value={counterName}
           onChange={(e) => setCounterName(e.target.value)}
+          className="form-input"
         />
         
         <select 
@@ -39,6 +40,7 @@ const AddCounterForm = () => {
           aria-label="Select threshold limit"
           value={threshold}
           onChange={(e) => setThreshold(e.target.value)}
+          className="form-select"
         >
           <option value="0">No limit</option>
           <option value="3">Limit: 3</option>
@@ -50,8 +52,9 @@ const AddCounterForm = () => {
           id="add-counter-btn" 
           aria-label="Add new counter"
           type="submit"
+          className="add-btn"
         >
-          Add New Counter
+          Add Counter
         </button>
       </form>
     </div>
