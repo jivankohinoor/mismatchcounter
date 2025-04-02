@@ -44,7 +44,23 @@ const ConfigPanel = ({ isVisible, onClose }) => {
       footerMessage: '',
       countdownMessage: ''
     },
-    selectedTemplate: 'romantic'
+    selectedTemplate: 'romantic',
+    advanced: {
+      randomMessageInterval: 10000,
+      enableAnimations: true,
+      debugMode: false,
+      autoSaveInterval: 60000,
+      allowNotifications: true,
+      mobileOptimized: true,
+      enableDataExport: true,
+      enableCharts: true
+    },
+    notifications: {
+      thresholdAlerts: true,
+      streakCelebrations: true,
+      birthdayReminders: true,
+      dailyReminders: false
+    }
   });
   
   // État pour la prévisualisation du thème
@@ -78,7 +94,23 @@ const ConfigPanel = ({ isVisible, onClose }) => {
           footerMessage: config.messages?.footerMessage || '',
           countdownMessage: config.messages?.countdownMessage || ''
         },
-        selectedTemplate: config.selectedTemplate || 'romantic'
+        selectedTemplate: config.selectedTemplate || 'romantic',
+        advanced: {
+          randomMessageInterval: config.advanced?.randomMessageInterval || 10000,
+          enableAnimations: config.advanced?.enableAnimations !== false,
+          debugMode: config.advanced?.debugMode || false,
+          autoSaveInterval: config.advanced?.autoSaveInterval || 60000,
+          allowNotifications: config.advanced?.allowNotifications !== false,
+          mobileOptimized: config.advanced?.mobileOptimized !== false,
+          enableDataExport: config.advanced?.enableDataExport !== false,
+          enableCharts: config.advanced?.enableCharts !== false
+        },
+        notifications: {
+          thresholdAlerts: config.notifications?.thresholdAlerts !== false,
+          streakCelebrations: config.notifications?.streakCelebrations !== false,
+          birthdayReminders: config.notifications?.birthdayReminders !== false,
+          dailyReminders: config.notifications?.dailyReminders || false
+        }
       });
     }
   }, [config]);
@@ -275,6 +307,12 @@ const ConfigPanel = ({ isVisible, onClose }) => {
             onClick={() => handleTabChange('messages')}
           >
             Messages
+          </button>
+          <button 
+            className={`config-tab ${activeTab === 'advanced' ? 'active' : ''}`} 
+            onClick={() => handleTabChange('advanced')}
+          >
+            Avancé
           </button>
           <button 
             className={`config-tab ${activeTab === 'import-export' ? 'active' : ''}`} 
@@ -493,6 +531,236 @@ const ConfigPanel = ({ isVisible, onClose }) => {
               onRemoveMessage={removeConsequence}
               type="consequences"
             />
+          </div>
+          
+          {/* Section Paramètres Avancés */}
+          <div className={`config-section ${activeTab === 'advanced' ? 'active' : ''}`}>
+            <h3>Paramètres Avancés</h3>
+
+            <div className="form-section">
+              <h4>Fonctionnalités</h4>
+              
+              <div className="form-group checkbox-group">
+                <input
+                  type="checkbox"
+                  id="enableAnimations"
+                  name="advanced.enableAnimations"
+                  checked={formData.advanced?.enableAnimations}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      advanced: {
+                        ...prev.advanced,
+                        enableAnimations: e.target.checked
+                      }
+                    }));
+                  }}
+                />
+                <label htmlFor="enableAnimations">Activer les animations</label>
+              </div>
+              
+              <div className="form-group checkbox-group">
+                <input
+                  type="checkbox"
+                  id="mobileOptimized"
+                  name="advanced.mobileOptimized"
+                  checked={formData.advanced?.mobileOptimized}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      advanced: {
+                        ...prev.advanced,
+                        mobileOptimized: e.target.checked
+                      }
+                    }));
+                  }}
+                />
+                <label htmlFor="mobileOptimized">Optimisation mobile</label>
+              </div>
+              
+              <div className="form-group checkbox-group">
+                <input
+                  type="checkbox"
+                  id="enableDataExport"
+                  name="advanced.enableDataExport"
+                  checked={formData.advanced?.enableDataExport}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      advanced: {
+                        ...prev.advanced,
+                        enableDataExport: e.target.checked
+                      }
+                    }));
+                  }}
+                />
+                <label htmlFor="enableDataExport">Autoriser l'exportation des données</label>
+              </div>
+              
+              <div className="form-group checkbox-group">
+                <input
+                  type="checkbox"
+                  id="enableCharts"
+                  name="advanced.enableCharts"
+                  checked={formData.advanced?.enableCharts}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      advanced: {
+                        ...prev.advanced,
+                        enableCharts: e.target.checked
+                      }
+                    }));
+                  }}
+                />
+                <label htmlFor="enableCharts">Activer les graphiques</label>
+              </div>
+            </div>
+            
+            <div className="form-section">
+              <h4>Notifications</h4>
+              
+              <div className="form-group checkbox-group">
+                <input
+                  type="checkbox"
+                  id="allowNotifications"
+                  name="advanced.allowNotifications"
+                  checked={formData.advanced?.allowNotifications}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      advanced: {
+                        ...prev.advanced,
+                        allowNotifications: e.target.checked
+                      }
+                    }));
+                  }}
+                />
+                <label htmlFor="allowNotifications">Autoriser les notifications</label>
+              </div>
+              
+              <div className="form-group checkbox-group">
+                <input
+                  type="checkbox"
+                  id="thresholdAlerts"
+                  name="notifications.thresholdAlerts"
+                  checked={formData.notifications?.thresholdAlerts}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      notifications: {
+                        ...prev.notifications,
+                        thresholdAlerts: e.target.checked
+                      }
+                    }));
+                  }}
+                />
+                <label htmlFor="thresholdAlerts">Alertes de seuil</label>
+              </div>
+              
+              <div className="form-group checkbox-group">
+                <input
+                  type="checkbox"
+                  id="streakCelebrations"
+                  name="notifications.streakCelebrations"
+                  checked={formData.notifications?.streakCelebrations}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      notifications: {
+                        ...prev.notifications,
+                        streakCelebrations: e.target.checked
+                      }
+                    }));
+                  }}
+                />
+                <label htmlFor="streakCelebrations">Célébrations de série</label>
+              </div>
+              
+              <div className="form-group checkbox-group">
+                <input
+                  type="checkbox"
+                  id="birthdayReminders"
+                  name="notifications.birthdayReminders"
+                  checked={formData.notifications?.birthdayReminders}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      notifications: {
+                        ...prev.notifications,
+                        birthdayReminders: e.target.checked
+                      }
+                    }));
+                  }}
+                />
+                <label htmlFor="birthdayReminders">Rappels d'anniversaire</label>
+              </div>
+              
+              <div className="form-group checkbox-group">
+                <input
+                  type="checkbox"
+                  id="dailyReminders"
+                  name="notifications.dailyReminders"
+                  checked={formData.notifications?.dailyReminders}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      notifications: {
+                        ...prev.notifications,
+                        dailyReminders: e.target.checked
+                      }
+                    }));
+                  }}
+                />
+                <label htmlFor="dailyReminders">Rappels quotidiens</label>
+              </div>
+            </div>
+            
+            <div className="form-section">
+              <h4>Performance</h4>
+              
+              <div className="form-group">
+                <label htmlFor="randomMessageInterval">Intervalle de message aléatoire (ms) :</label>
+                <input
+                  type="number"
+                  id="randomMessageInterval"
+                  name="advanced.randomMessageInterval"
+                  value={formData.advanced?.randomMessageInterval}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      advanced: {
+                        ...prev.advanced,
+                        randomMessageInterval: parseInt(e.target.value, 10)
+                      }
+                    }));
+                  }}
+                  min="1000"
+                  step="1000"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="autoSaveInterval">Intervalle de sauvegarde auto (ms) :</label>
+                <input
+                  type="number"
+                  id="autoSaveInterval"
+                  name="advanced.autoSaveInterval"
+                  value={formData.advanced?.autoSaveInterval}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      advanced: {
+                        ...prev.advanced,
+                        autoSaveInterval: parseInt(e.target.value, 10)
+                      }
+                    }));
+                  }}
+                  min="5000"
+                  step="1000"
+                />
+              </div>
+            </div>
           </div>
           
           {/* Section Import/Export */}

@@ -2,6 +2,7 @@ import React from 'react';
 import { ConfigProvider } from './contexts/ConfigContext';
 import { DataProvider } from './contexts/DataContext';
 import { BirthdayProvider } from './contexts/BirthdayContext';
+import { NotificationProvider } from './components/NotificationSystem';
 import MismatchApp from './components/MismatchApp';
 
 // Importation des styles dans le bon ordre
@@ -12,13 +13,16 @@ import './styles/tailwind.css';   // Tailwind après
 // Styles spécifiques à certains composants
 import './styles/styles.css';
 import './styles/configPanel.tailwind.css';
+import './styles/mobile.css';
 
 function App() {
   return (
     <ConfigProvider>
       <DataProvider>
         <BirthdayProvider>
-          <MismatchApp />
+          <NotificationProvider>
+            <MismatchApp />
+          </NotificationProvider>
         </BirthdayProvider>
       </DataProvider>
     </ConfigProvider>

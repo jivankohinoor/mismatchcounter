@@ -1,0 +1,163 @@
+/* Mobile Responsive Styles for Mismatch Counter App */
+
+/* Base mobile styles */
+@media screen and (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .container {
+    padding: 10px;
+    max-width: 100%;
+  }
+  
+  header {
+    flex-direction: column;
+    text-align: center;
+    padding: 15px 0;
+  }
+  
+  header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+  }
+  
+  header p {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+  }
+  
+  .header-controls {
+    width: 100%;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  
+  /* Tabs */
+  .app-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    margin-bottom: 15px;
+  }
+  
+  .app-tabs button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  
+  /* Counter section */
+  .counter {
+    flex-direction: column;
+    padding: 15px;
+  }
+  
+  .counter-info {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .counter-actions {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .counter-button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  
+  /* Analytics & Charts */
+  .chart-dashboard {
+    padding: 10px;
+  }
+  
+  .stats-summary {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .chart-type-selector {
+    margin-top: 10px;
+  }
+  
+  /* Config panel */
+  .config-panel {
+    width: 95%;
+    max-width: 95%;
+    height: 90%;
+    padding: 15px;
+  }
+  
+  .config-tabs button {
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+  
+  /* Footer */
+  footer {
+    padding: 15px 0;
+    font-size: 0.8rem;
+  }
+  
+  /* Notifications */
+  .notification-dropdown {
+    width: 95%;
+    right: 2.5%;
+    left: 2.5%;
+  }
+  
+  /* Data Management */
+  .data-manager {
+    padding: 15px;
+  }
+}
+
+/* Extra small devices (phones) */
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 8px;
+  }
+  
+  header h1 {
+    font-size: 1.3rem;
+  }
+  
+  .counter {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .counter-label {
+    font-size: 1rem;
+  }
+  
+  .love-message {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  
+  .counter-count {
+    font-size: 1.2rem;
+  }
+  
+  .streak-info {
+    font-size: 0.9rem;
+  }
+  
+  .config-panel {
+    padding: 10px;
+  }
+  
+  .config-panel h2 {
+    font-size: 1.2rem;
+  }
+  
+  .chart-container {
+    height: 200px;
+  }
+}

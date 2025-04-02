@@ -82,7 +82,19 @@ const defaultConfig = {
     randomMessageInterval: 10000, // milliseconds
     enableAnimations: true,
     debugMode: false,
-    autoSaveInterval: 60000 // milliseconds
+    autoSaveInterval: 60000, // milliseconds
+    allowNotifications: true,
+    mobileOptimized: true,
+    enableDataExport: true,
+    enableCharts: true
+  },
+  
+  // Notification settings
+  notifications: {
+    thresholdAlerts: true,
+    streakCelebrations: true,
+    birthdayReminders: true,
+    dailyReminders: false
   }
 };
 
