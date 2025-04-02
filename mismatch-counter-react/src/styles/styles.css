@@ -741,6 +741,51 @@ input, select {
     background-color: #cc0000;
 }
 
+/* Consequence Time Limit Input Styles */
+.add-message-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.add-message-form input {
+    flex-grow: 1;
+    min-width: 200px;
+}
+
+.consequence-input {
+    width: 100%;
+}
+
+.time-limit-input-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+}
+
+.time-limit-select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: white;
+    font-size: 0.9em;
+    min-width: 120px;
+}
+
+@media (max-width: 600px) {
+    .add-message-form {
+        flex-direction: column;
+    }
+    
+    .time-limit-input-container {
+        width: 100%;
+        margin-right: 0;
+    }
+}
+
 /* Responsive styles */
 @media (max-width: 600px) {
     .counter {

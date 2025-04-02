@@ -56,16 +56,26 @@ const defaultConfig = {
     ],
     
     consequences: [
-      "Time to bring home flowers! 💐",
-      "A fancy dinner is in order! 🍽️",
-      "Looks like someone owes a massage! 💆‍♀️",
-      "Movie night - your choice! 🎬",
-      "Special cuddle duty for a week! 🥰",
-      "Chocolate delivery required! 🍫",
-      "Time for a special date night! ❤️",
-      "Breakfast in bed coming up! 🥞",
-      "I'm cooking your favorite food! 🍕",
-      "Time for a special treat! 🎁"
+      { text: "Time to bring home flowers! 💐", timeLimit: 720 }, // 12 hours
+      { text: "A fancy dinner is in order! 🍽️", timeLimit: 1440 }, // 24 hours
+      { text: "Looks like someone owes a massage! 💆‍♀️", timeLimit: 360 }, // 6 hours
+      { text: "Movie night - your choice! 🎬", timeLimit: 2880 }, // 48 hours
+      { text: "Special cuddle duty for a week! 🥰", timeLimit: 240 }, // 4 hours
+      { text: "Chocolate delivery required! 🍫", timeLimit: 180 }, // 3 hours
+      { text: "Time for a special date night! ❤️", timeLimit: 4320 }, // 72 hours
+      { text: "Breakfast in bed coming up! 🥞", timeLimit: 960 }, // 16 hours
+      { text: "I'm cooking your favorite food! 🍕", timeLimit: 1080 }, // 18 hours
+      { text: "Time for a special treat! 🎁", timeLimit: 120 }, // 2 hours
+      { text: "Write a love note with at least 3 compliments 💌", timeLimit: 60 }, // 1 hour
+      { text: "Offer a foot or hand massage for 15 minutes 👐", timeLimit: 180 }, // 3 hours
+      { text: "Plan a surprise weekend activity 🎭", timeLimit: 2880 }, // 48 hours
+      { text: "Do the dishes for the next 3 days 🍽️", timeLimit: 180 }, // 3 hours
+      { text: "Take charge of grocery shopping this week 🛒", timeLimit: 1440 }, // 24 hours
+      { text: "Handle all pet duties for 2 days 🐱", timeLimit: 240 }, // 4 hours
+      { text: "Make the bed every morning for a week 🛏️", timeLimit: 360 }, // 6 hours
+      { text: "Brew coffee/tea for both of us for 3 days ☕", timeLimit: 90 }, // 1.5 hours
+      { text: "Give a 30-minute back rub tonight 💆", timeLimit: 720 }, // 12 hours
+      { text: "No phone during our next dinner date 📵", timeLimit: 480 } // 8 hours
     ],
     
     birthdayTitle: "🎉 Happy Birthday, My Love! 🎂",

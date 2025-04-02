@@ -213,12 +213,38 @@ export const ConfigProvider = ({ children }) => {
 
   // Apply theme CSS variables
   const applyTheme = (theme) => {
+    // Apply main colors
     document.documentElement.style.setProperty('--main-color', theme.mainColor);
     document.documentElement.style.setProperty('--secondary-color', theme.secondaryColor);
     document.documentElement.style.setProperty('--background-color', theme.backgroundColor);
     document.documentElement.style.setProperty('--font-family', theme.fontFamily);
     
-    // Appliquer les animations basées sur les paramètres
+    // Convert hex colors to RGB for use with rgba()
+    const hexToRgb = (hex) => {
+      // Remove # if present
+      hex = hex.replace('#', '');
+      
+      // Parse hex values
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      
+      // Return as comma-separated string for CSS variables
+      return `${r}, ${g}, ${b}`;
+    };
+    
+    // Set RGB variables for rgba() usage
+    document.documentElement.style.setProperty('--main-color-rgb', hexToRgb(theme.mainColor));
+    document.documentElement.style.setProperty('--secondary-color-rgb', hexToRgb(theme.secondaryColor));
+    
+    // Set body background to create a soft gradient based on theme colors
+    document.body.style.background = `linear-gradient(135deg, ${theme.backgroundColor} 0%, rgba(${hexToRgb(theme.mainColor)}, 0.05) 100%)`;
+    document.body.style.backgroundAttachment = 'fixed';
+    
+    // Apply fonts
+    document.body.style.fontFamily = theme.fontFamily;
+    
+    // Apply animations based on settings
     if (config.advanced && config.advanced.enableAnimations === false) {
       document.documentElement.style.setProperty('--transition-speed', '0s');
       document.documentElement.style.setProperty('--animation-duration', '0s');
@@ -226,6 +252,12 @@ export const ConfigProvider = ({ children }) => {
       document.documentElement.style.setProperty('--transition-speed', '0.3s');
       document.documentElement.style.setProperty('--animation-duration', '1s');
     }
+    
+    // Force layout recalculation to ensure theme applies immediately
+    document.body.classList.add('theme-transition');
+    setTimeout(() => {
+      document.body.classList.remove('theme-transition');
+    }, 50);
   };
   
   // Auto-save timer reference

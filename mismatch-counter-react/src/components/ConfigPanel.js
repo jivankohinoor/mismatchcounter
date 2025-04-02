@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useConfig } from '../contexts/ConfigContext';
 import { useData } from '../contexts/DataContext';
+import { useNotifications } from '../contexts/NotificationContext';
 import ThemePreview from './ThemePreview';
 import CounterTemplateSelector from './CounterTemplateSelector';
 import MessagesList from './MessagesList';
@@ -12,7 +13,7 @@ import IconSelector from './IconSelector';
 import FontSelector from './FontSelector';
 
 const ConfigPanel = ({ isVisible, onClose }) => {
-  const { config, saveConfig, resetConfig } = useConfig();
+  const { config, saveConfig, resetConfig, applyTheme } = useConfig();
   const { initializeCounters } = useData();
   
   // Onglets de configuration
@@ -126,12 +127,22 @@ const ConfigPanel = ({ isVisible, onClose }) => {
   };
   
   // Appliquer le thème en prévisualisation
-  const handleApplyTheme = () => {
-    if (previewTheme) {
+  const handleApplyTheme = (theme) => {
+    // If called from Apply button in ThemePreview, use the previewTheme
+    const themeToApply = theme || previewTheme;
+    
+    if (themeToApply) {
+      // Update form data
       setFormData(prev => ({
         ...prev,
-        theme: { ...previewTheme }
+        theme: { ...themeToApply }
       }));
+      
+      // Also apply theme immediately using the context's applyTheme function
+      if (applyTheme) {
+        applyTheme(themeToApply);
+      }
+      
       setPreviewTheme(null);
     }
   };
@@ -253,20 +264,26 @@ const ConfigPanel = ({ isVisible, onClose }) => {
       try {
         const importedConfig = JSON.parse(e.target.result);
         saveConfig(importedConfig);
-        alert("Configuration importée avec succès !");
+        success("Configuration successfully imported!");
       } catch (error) {
-        alert("Échec de l'importation : " + error.message);
+        error("Import failed: " + error.message);
       }
     };
     reader.readAsText(file);
   };
   
-  // Réinitialiser la configuration
+  // Import useNotifications to use custom dialogs
+  const { confirm, success, error } = useNotifications();
+  
+  // Reset configuration
   const handleResetConfig = () => {
-    if (window.confirm("Êtes-vous sûr de vouloir réinitialiser la configuration par défaut ? Cette action est irréversible.")) {
-      resetConfig();
-      if (onClose) onClose();
-    }
+    confirm(
+      "Are you sure you want to reset to default configuration? This action cannot be undone.",
+      () => {
+        resetConfig();
+        if (onClose) onClose();
+      }
+    );
   };
   
   // Si le panneau n'est pas visible, ne rien afficher
@@ -275,7 +292,7 @@ const ConfigPanel = ({ isVisible, onClose }) => {
   return (
     <div className="config-panel">
       <div className="config-panel-content">
-        <h2>Personnalisez votre application</h2>
+        <h2>Customize Your Application</h2>
         <button 
           className="close-config-btn"
           onClick={onClose}
@@ -288,19 +305,19 @@ const ConfigPanel = ({ isVisible, onClose }) => {
             className={`config-tab ${activeTab === 'basic' ? 'active' : ''}`} 
             onClick={() => handleTabChange('basic')}
           >
-            Informations
+            Basic Info
           </button>
           <button 
             className={`config-tab ${activeTab === 'appearance' ? 'active' : ''}`} 
             onClick={() => handleTabChange('appearance')}
           >
-            Apparence
+            Appearance
           </button>
           <button 
             className={`config-tab ${activeTab === 'templates' ? 'active' : ''}`} 
             onClick={() => handleTabChange('templates')}
           >
-            Modèles
+            Templates
           </button>
           <button 
             className={`config-tab ${activeTab === 'messages' ? 'active' : ''}`} 
@@ -312,7 +329,7 @@ const ConfigPanel = ({ isVisible, onClose }) => {
             className={`config-tab ${activeTab === 'advanced' ? 'active' : ''}`} 
             onClick={() => handleTabChange('advanced')}
           >
-            Avancé
+            Advanced
           </button>
           <button 
             className={`config-tab ${activeTab === 'import-export' ? 'active' : ''}`} 
@@ -393,7 +410,7 @@ const ConfigPanel = ({ isVisible, onClose }) => {
             <ThemePreview 
               currentTheme={formData.theme}
               previewTheme={previewTheme}
-              onApplyTheme={handlePreviewTheme}
+              onApplyTheme={handleApplyTheme}
               onRevertTheme={handleRevertTheme}
             />
             
@@ -461,60 +478,61 @@ const ConfigPanel = ({ isVisible, onClose }) => {
           
           {/* Section Templates */}
           <div className={`config-section ${activeTab === 'templates' ? 'active' : ''}`}>
+            <h3>Templates</h3>
             <CounterTemplateSelector
               selectedTemplate={formData.selectedTemplate}
               onSelectTemplate={handleTemplateChange}
             />
           </div>
           
-          {/* Section Messages */}
+          {/* Messages Section */}
           <div className={`config-section ${activeTab === 'messages' ? 'active' : ''}`}>
             <h3>Messages</h3>
             <div className="form-group">
-              <label htmlFor="birthdayTitle">Titre pour l'anniversaire :</label>
+              <label htmlFor="birthdayTitle">Birthday Title:</label>
               <input
                 type="text"
                 id="birthdayTitle"
                 name="messages.birthdayTitle"
                 value={formData.messages.birthdayTitle}
                 onChange={handleChange}
-                placeholder="ex. Joyeux Anniversaire !"
+                placeholder="e.g. Happy Birthday!"
               />
             </div>
             
             <div className="form-group">
-              <label htmlFor="birthdayMessage">Message d'anniversaire :</label>
+              <label htmlFor="birthdayMessage">Birthday Message:</label>
               <textarea
                 id="birthdayMessage"
                 name="messages.birthdayMessage"
                 value={formData.messages.birthdayMessage}
                 onChange={handleChange}
                 rows="3"
-                placeholder="Entrez votre message spécial d'anniversaire ici"
+                placeholder="Enter your special birthday message here"
               ></textarea>
             </div>
             
             <div className="form-group">
-              <label htmlFor="footerMessage">Message de pied de page :</label>
+              <label htmlFor="footerMessage">Footer Message:</label>
               <input
                 type="text"
                 id="footerMessage"
                 name="messages.footerMessage"
                 value={formData.messages.footerMessage}
                 onChange={handleChange}
-                placeholder="Message à afficher dans le pied de page"
+                placeholder="Message to display in the footer"
               />
             </div>
             
             <div className="form-group">
-              <label htmlFor="countdownMessage">Message de compte à rebours :</label>
+              <label htmlFor="countdownMessage">Countdown Message:</label>
               <input
                 type="text"
                 id="countdownMessage"
                 name="messages.countdownMessage"
                 value={formData.messages.countdownMessage}
                 onChange={handleChange}
-                placeholder="Message à afficher pendant le compte à rebours"
+                placeholder="Message to display during the countdown"
               />
             </div>
             
@@ -763,24 +781,24 @@ const ConfigPanel = ({ isVisible, onClose }) => {
             </div>
           </div>
           
-          {/* Section Import/Export */}
+          {/* Import/Export Section */}
           <div className={`config-section ${activeTab === 'import-export' ? 'active' : ''}`}>
             <h3>Import & Export</h3>
             <div className="form-group">
-              <h4>Exporter la configuration</h4>
-              <p>Téléchargez votre configuration actuelle sous forme de fichier JSON :</p>
+              <h4>Export Configuration</h4>
+              <p>Download your current configuration as a JSON file:</p>
               <button 
                 type="button" 
                 className="export-btn" 
                 onClick={handleExportConfig}
               >
-                Exporter la configuration
+                Export Configuration
               </button>
             </div>
             
             <div className="form-group">
-              <h4>Importer une configuration</h4>
-              <p>Importez une configuration préalablement sauvegardée :</p>
+              <h4>Import Configuration</h4>
+              <p>Import a previously saved configuration:</p>
               <input 
                 type="file" 
                 id="import-file" 
@@ -790,14 +808,14 @@ const ConfigPanel = ({ isVisible, onClose }) => {
             </div>
             
             <div className="form-group">
-              <h4>Réinitialiser la configuration</h4>
-              <p>Réinitialiser tous les paramètres aux valeurs par défaut :</p>
+              <h4>Reset Configuration</h4>
+              <p>Reset all settings to default values:</p>
               <button 
                 type="button" 
                 className="reset-btn" 
                 onClick={handleResetConfig}
               >
-                Réinitialiser
+                Reset
               </button>
             </div>
           </div>
@@ -807,14 +825,14 @@ const ConfigPanel = ({ isVisible, onClose }) => {
               type="submit" 
               className="save-config-btn"
             >
-              Enregistrer les changements
+              Save Changes
             </button>
             <button 
               type="button" 
               className="cancel-btn"
               onClick={onClose}
             >
-              Annuler
+              Cancel
             </button>
           </div>
         </form>

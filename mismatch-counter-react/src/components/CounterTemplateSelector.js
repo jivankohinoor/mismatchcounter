@@ -75,7 +75,6 @@ const CounterTemplateSelector = ({ selectedTemplate, onSelectTemplate }) => {
   
   return (
     <div className="counter-template-selector">
-      <h3 className="mb-4 text-lg font-semibold">Select a Counter Template</h3>
       <p className="mb-4 text-sm text-gray-600">
         Choose a template of pre-defined counters based on your relationship type.
         You can always customize these later.

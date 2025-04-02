@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useConfig } from '../contexts/ConfigContext';
 import { useData } from '../contexts/DataContext';
 import { useBirthday } from '../contexts/BirthdayContext';
+import { useNotifications } from '../contexts/NotificationContext';
 import Header from './Header';
 import LoveMessage from './LoveMessage';
 import CounterSection from './CounterSection';
@@ -11,7 +12,7 @@ import BirthdayMessage from './BirthdayMessage';
 import ConfigPanel from './ConfigPanel';
 import ChartDashboard from './ChartDashboard';
 import DataManager from './DataManager';
-import NotificationBell, { useNotifications } from './NotificationSystem';
+import NotificationBell from './ui/NotificationBell';
 
 const MismatchApp = () => {
   const { config, isLoading: configLoading } = useConfig();
@@ -25,6 +26,21 @@ const MismatchApp = () => {
     setShowConfig(!showConfig);
   };
 
+  // Force localStorage consistency on app load
+  React.useEffect(() => {
+    const forceSyncLocalStorage = () => {
+      // This will just trigger the localStorage sync
+      const event = new CustomEvent('mismatch-increment');
+      document.dispatchEvent(event);
+      console.log("Forced localStorage sync on app load");
+    };
+    
+    // Wait for app to be fully loaded
+    if (!configLoading && !dataLoading) {
+      forceSyncLocalStorage();
+    }
+  }, [configLoading, dataLoading]);
+  
   // Show loading state while configs and data are loading
   if (configLoading || dataLoading) {
     return <div className="loading">Loading application...</div>;

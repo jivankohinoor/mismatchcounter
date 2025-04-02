@@ -1,18 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import themePresets from '../utils/themePresets';
 import ThemeIcon, { getThemeIcon } from './ThemeIcon';
 
 const ThemePreview = ({ currentTheme, previewTheme, onApplyTheme, onRevertTheme }) => {
-  // Déterminer quel thème afficher (prévisualisation ou actuel)
-  const displayTheme = previewTheme || currentTheme;
+  // Local state to track theme changes
+  const [appliedTheme, setAppliedTheme] = useState(null);
+  const [animatePreview, setAnimatePreview] = useState(false);
   
-  // Générer un style pour la prévisualisation basé sur le thème
+  // Determine which theme to display (preview, applied, or current)
+  const displayTheme = previewTheme || appliedTheme || currentTheme;
+  
+  // Animation effect when theme changes
+  useEffect(() => {
+    if (previewTheme) {
+      setAnimatePreview(true);
+      const timer = setTimeout(() => setAnimatePreview(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [previewTheme]);
+  
+  // Generate styles for preview panel based on theme
   const previewStyle = {
     backgroundColor: displayTheme.backgroundColor,
     color: "#333333",
     fontFamily: displayTheme.fontFamily,
     transition: "all 0.3s ease",
+    animation: animatePreview ? "preview-pulse 0.3s ease" : "none",
   };
+  
+  // Dynamic styles to add to document
+  useEffect(() => {
+    // Create style element for preview animation
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `
+      @keyframes preview-pulse {
+        0% { transform: scale(0.98); opacity: 0.8; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+    `;
+    document.head.appendChild(styleEl);
+    
+    return () => {
+      document.head.removeChild(styleEl);
+    };
+  }, []);
   
   const headerStyle = {
     color: displayTheme.secondaryColor,
@@ -119,7 +150,12 @@ const ThemePreview = ({ currentTheme, previewTheme, onApplyTheme, onRevertTheme 
         <button 
           type="button" 
           className="bg-green-500 text-white px-4 py-2 rounded-md transition-colors hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-          onClick={() => onApplyTheme(displayTheme)}
+          onClick={() => {
+            // Set the locally applied theme
+            setAppliedTheme(displayTheme);
+            // Call the parent component's apply function
+            onApplyTheme(displayTheme);
+          }}
           disabled={!previewTheme}
         >
           Appliquer
@@ -127,7 +163,12 @@ const ThemePreview = ({ currentTheme, previewTheme, onApplyTheme, onRevertTheme 
         <button 
           type="button" 
           className="bg-gray-500 text-white px-4 py-2 rounded-md transition-colors hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-          onClick={onRevertTheme}
+          onClick={() => {
+            // Clear the locally applied theme
+            setAppliedTheme(null);
+            // Call the parent's revert function
+            onRevertTheme();
+          }}
           disabled={!previewTheme}
         >
           Annuler

@@ -1,11 +1,44 @@
 /* Layout improvements for the Mismatch Counter app */
 
+/* Global theme transition styles */
+:root {
+  --main-color: #FF4B91;
+  --main-color-rgb: 255, 75, 145;
+  --secondary-color: #6499E9;
+  --secondary-color-rgb: 100, 153, 233;
+  --background-color: #FFF2F5;
+  --transition-speed: 0.3s;
+  --animation-duration: 1s;
+}
+
+/* Add theme transition for all elements */
+*, *::before, *::after {
+  transition: background-color var(--transition-speed) ease, 
+              color var(--transition-speed) ease, 
+              border-color var(--transition-speed) ease,
+              box-shadow var(--transition-speed) ease;
+}
+
+.theme-transition {
+  animation: theme-flash 0.05s;
+}
+
+@keyframes theme-flash {
+  0% { opacity: 0.98; }
+  100% { opacity: 1; }
+}
+
 /* Container improvements for wide screens */
 .container {
   max-width: 1000px; /* Increased from 800px */
   width: 100%;
   margin: 0 auto;
   padding: 20px 30px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s var(--transition-speed);
 }
 
 /* Main layout for counters on wider screens */
@@ -20,26 +53,58 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    border: 1px solid #eee;
-    border-radius: 10px;
-    padding: 15px;
+    border: none;
+    border-radius: 16px;
+    padding: 20px;
     margin-bottom: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(var(--main-color-rgb, 255, 105, 180), 0.08);
+    transition: all var(--transition-speed);
+    background-color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .counter::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--main-color);
+    opacity: 0.7;
+    transition: height var(--transition-speed);
   }
   
   .counter:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(var(--main-color-rgb, 255, 105, 180), 0.12);
+  }
+  
+  .counter:hover::before {
+    height: 6px;
   }
 
   .counter-details {
-    margin-bottom: 12px;
+    margin-bottom: 18px;
+    position: relative;
+    padding-left: 28px;
+  }
+  
+  .counter-details::before {
+    content: '♥'; /* Default heart icon */
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 18px;
+    color: var(--main-color);
   }
 
   .counter-buttons {
     margin-top: auto;
     justify-content: space-between;
+    padding-top: 15px;
+    border-top: 1px solid rgba(0,0,0,0.05);
   }
 }
 
@@ -48,40 +113,49 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
   padding: 0;
-  transition: transform 0.2s, background-color 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-speed);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  border: none;
 }
 
 .counter-buttons button:hover {
-  transform: scale(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+.counter-buttons button:active {
+  transform: translateY(1px);
 }
 
 .counter-buttons .increment-btn {
-  background-color: #4caf50;
+  background-color: #4ade80;
+  color: white;
 }
 
 .counter-buttons .increment-btn:hover {
-  background-color: #43a047;
+  background-color: #22c55e;
 }
 
 .counter-buttons .delete-btn {
-  background-color: #f44336;
+  background-color: #f87171;
+  color: white;
 }
 
 .counter-buttons .delete-btn:hover {
-  background-color: #e53935;
+  background-color: #ef4444;
 }
 
 .counter-buttons .forgive-btn {
-  background-color: #2196f3;
+  background-color: #60a5fa;
+  color: white;
 }
 
 .counter-buttons .forgive-btn:hover {
-  background-color: #1e88e5;
+  background-color: #3b82f6;
 }
 
 /* Consistent button spacing */
@@ -92,18 +166,19 @@
 }
 
 .count {
-  margin-right: 10px;
-  padding: 5px 10px;
-  background-color: #f0f0f0;
-  border-radius: 20px;
+  margin-right: 12px;
+  padding: 6px 14px;
+  background-color: rgba(var(--main-color-rgb, 255, 105, 180), 0.1);
+  border-radius: 24px;
   min-width: 30px;
   text-align: center;
-  font-weight: 600;
-  color: #333;
-  border: 1px solid #e0e0e0;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--main-color);
+  border: none;
   display: inline-block;
-  min-width: 40px;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  min-width: 45px;
+  transition: all var(--transition-speed);
 }
 
 /* Improved icon appearance */
@@ -111,38 +186,158 @@
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--main-color);
+}
+
+.counter-icon {
+  color: var(--main-color);
 }
 
 .counter-stats {
   font-size: 0.9rem;
   color: #666;
+  display: flex;
+  align-items: center;
 }
 
 /* Improved thresholds and warnings */
 .threshold-warning {
   position: relative;
   transform: none;
-  display: inline-block;
-  margin-bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 12px;
   font-size: 0.75rem;
-  padding: 3px 8px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: #fef9c3;
+  color: #854d0e;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.threshold-warning.threshold-exceeded {
+  background-color: #fee2e2;
+  color: #b91c1c;
 }
 
 /* Improved consequences */
 .consequence-alert {
-  margin-top: 15px;
-  padding: 12px;
+  margin-top: 18px;
+  padding: 16px;
+  background-color: rgba(var(--main-color-rgb, 255, 105, 180), 0.08);
+  border-radius: 12px;
+  border-left: 4px solid var(--main-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.consequence-alert::before {
+  content: '!';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 24px;
+  height: 24px;
+  background-color: var(--main-color);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .consequence-alert h3 {
-  font-size: 1rem;
+  font-size: 1.1rem;
   margin-top: 0;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  color: var(--main-color);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.consequence-timer {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  background-color: rgba(var(--main-color-rgb, 255, 105, 180), 0.1);
+  padding: 4px 8px;
+  border-radius: 20px;
+  margin-left: 10px;
+  font-weight: 600;
+}
+
+.time-limit {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  color: #555;
+  margin-left: 4px;
+}
+
+.timer-icon {
+  margin-right: 5px;
+  animation: pulse 1s infinite ease-in-out;
+}
+
+.time-critical {
+  color: #ef4444;
+  font-weight: 700;
+  animation: blink 1s infinite;
+  position: relative;
+}
+
+.time-critical::after {
+  content: '!';
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  font-size: 12px;
+  color: #ef4444;
+  font-weight: bold;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 .consequence-alert p {
-  margin: 0;
+  color: #555;
+  font-size: 0.95rem;
+  margin: 0 0 15px 0;
+}
+
+.complete-consequence-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 6px;
   font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 12px;
+}
+
+.complete-consequence-btn:hover {
+  background-color: #16a34a;
+  transform: translateY(-1px);
+}
+
+.complete-consequence-btn:active {
+  transform: translateY(1px);
 }
 
 /* Main section title improvements */

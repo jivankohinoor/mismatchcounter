@@ -10,11 +10,42 @@ const CounterSection = () => {
   const { config } = useConfig();
   const { counters } = useData();
   
+  // Map iconName to emoji for display
+  const getIconEmoji = (iconName) => {
+    const iconToEmojiMap = {
+      'Heart': '❤️',
+      'Star': '⭐',
+      'Moon': '🌙',
+      'Sun': '☀️',
+      'Leaf': '🍃',
+      'Coffee': '☕',
+      'Gift': '🎁',
+      'Home': '🏠',
+      'Crown': '👑',
+      'Music': '🎵',
+      'Smile': '😊',
+      'Cat': '🐱',
+      'Camera': '📷',
+      'Droplets': '💧',
+      'Minimize': '🔹',
+      'Flame': '🔥',
+      'Pizza': '🍕',
+      'AlignJustify': '🗂️',
+      'ShoppingBag': '🛍️',
+      'Cake': '🎂'
+    };
+    
+    return iconToEmojiMap[iconName] || '🐱';
+  };
+  
+  // Get the appropriate emoji from theme config
+  const iconEmoji = config.theme?.iconEmoji || getIconEmoji(config.theme?.iconName) || '🐱';
+  
   return (
     <div className="counter-section">
       <h2>
         Mismatch Counters 
-        <span id="counter-icon" className="cat-icon">{config.theme?.iconEmoji || '🐱'}</span>
+        <span id="counter-icon" className="cat-icon">{iconEmoji}</span>
       </h2>
       
       {/* Counters Container */}

@@ -2,8 +2,9 @@ import React from 'react';
 import { ConfigProvider } from './contexts/ConfigContext';
 import { DataProvider } from './contexts/DataContext';
 import { BirthdayProvider } from './contexts/BirthdayContext';
-import { NotificationProvider } from './components/NotificationSystem';
+import { NotificationProvider } from './contexts/NotificationContext';
 import MismatchApp from './components/MismatchApp';
+import Notifications from './components/ui/Notifications';
 
 // Importation des styles dans le bon ordre
 import './styles/variables.css';  // Variables CSS en premier
@@ -14,6 +15,7 @@ import './styles/tailwind.css';   // Tailwind après
 import './styles/styles.css';
 import './styles/configPanel.tailwind.css';
 import './styles/mobile.css';
+import './styles/notifications.css'; // New notifications styles
 
 // New layout improvements
 import './styles/layout-improvements.css';
@@ -25,6 +27,7 @@ function App() {
         <BirthdayProvider>
           <NotificationProvider>
             <MismatchApp />
+            <Notifications />
           </NotificationProvider>
         </BirthdayProvider>
       </DataProvider>

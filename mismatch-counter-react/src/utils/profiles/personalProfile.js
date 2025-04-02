@@ -1,5 +1,11 @@
 // Personal mismatches profile
 const personalProfile = [
+  // Test counters with special fast-expiring consequences
+  { name: "⏱️ TEST: 30-Second Timer", threshold: 1 },
+  { name: "⏱️ TEST: 1-Minute Consequences", threshold: 1 },
+  { name: "⏱️ TEST: 2-Minute Actions", threshold: 1 },
+  
+  // Regular personal counters
   { name: "Forgot to take medication", threshold: 1 },
   { name: "Skipped workout", threshold: 5 },
   { name: "Stayed up too late", threshold: 4 },

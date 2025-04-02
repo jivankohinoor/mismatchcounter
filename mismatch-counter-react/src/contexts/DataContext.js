@@ -21,34 +21,60 @@ export const DataProvider = ({ children }) => {
     if (!config.isLoading) {
       initializeData();
     }
-  }, [config]);
+  }, [config.isLoading]);
+  
+  // Auto-save counters to localStorage whenever they change
+  useEffect(() => {
+    if (!isLoading && counters.length > 0) {
+      console.log("Auto-saving counters to localStorage...");
+      saveToStorage(counters, weeklyStats);
+    }
+  }, [counters, weeklyStats]);
+  
+  // Listen for custom increment events to force save
+  useEffect(() => {
+    const handleForceSave = () => {
+      console.log("Forced save after increment triggered");
+      saveToStorage(counters, weeklyStats);
+    };
+    
+    document.addEventListener('mismatch-increment', handleForceSave);
+    
+    return () => {
+      document.removeEventListener('mismatch-increment', handleForceSave);
+    };
+  }, [counters, weeklyStats]);
 
   // Initialize data from localStorage or defaults
   const initializeData = () => {
     try {
       setIsLoading(true);
-      const hasLoadedFromStorage = loadFromStorage();
+      console.log("Initializing data...");
       
-      // Si aucun compteur n'a été chargé depuis le localStorage ou s'ils sont vides,
-      // initialiser avec les compteurs par défaut du template sélectionné
-      if (!hasLoadedFromStorage || counters.length === 0) {
+      // Try to load data from localStorage first
+      const loadedFromStorage = loadFromStorage();
+      
+      // If we have counters at this point (from loadFromStorage), use them
+      if (loadedFromStorage) {
+        console.log("Using existing counters from localStorage");
+      } else {
+        // Otherwise initialize with defaults - but only if we don't have any counters yet
+        console.log("No existing counters found in localStorage, initializing defaults");
         initializeDefaultCounters();
       }
       
       // Check if we need to reset weekly stats
       const currentWeekStart = getStartOfWeek();
       if (weeklyStats.startDate !== currentWeekStart) {
-        setWeeklyStats({
+        console.log("Resetting weekly stats for new week");
+        const newWeeklyStats = {
           startDate: currentWeekStart,
           counts: {},
           perfectDays: 0
-        });
-        // Save the updated stats to storage
-        localStorage.setItem('mismatchAppWeeklyStats', JSON.stringify({
-          startDate: currentWeekStart,
-          counts: {},
-          perfectDays: 0
-        }));
+        };
+        
+        setWeeklyStats(newWeeklyStats);
+        localStorage.setItem('mismatchAppWeeklyStats', JSON.stringify(newWeeklyStats));
       }
       
       setIsLoading(false);
@@ -72,7 +98,8 @@ export const DataProvider = ({ children }) => {
       threshold: counter.threshold,
       lastIncrement: null,
       lastReset: today,
-      events: []
+      events: [],
+      activeConsequence: null
     }));
     
     setCounters(newCounters);
@@ -95,8 +122,19 @@ export const DataProvider = ({ children }) => {
   // Save data to localStorage
   const saveToStorage = (counterData, statsData) => {
     try {
-      localStorage.setItem('mismatchAppCounters', JSON.stringify(counterData || counters));
-      localStorage.setItem('mismatchAppWeeklyStats', JSON.stringify(statsData || weeklyStats));
+      // Get the data to save, using parameters or current state
+      const countersToSave = counterData || counters;
+      const statsToSave = statsData || weeklyStats;
+      
+      // Only save if we have valid data
+      if (Array.isArray(countersToSave) && countersToSave.length > 0) {
+        localStorage.setItem('mismatchAppCounters', JSON.stringify(countersToSave));
+        console.log("Saved counters to localStorage:", countersToSave);
+      } else {
+        console.warn("Attempted to save invalid counters:", countersToSave);
+      }
+      
+      localStorage.setItem('mismatchAppWeeklyStats', JSON.stringify(statsToSave));
       return true;
     } catch (e) {
       console.error("Error saving to localStorage: ", e);
@@ -113,21 +151,69 @@ export const DataProvider = ({ children }) => {
       let hasLoadedCounters = false;
       
       if (savedCounters) {
-        const parsedCounters = JSON.parse(savedCounters);
-        if (Array.isArray(parsedCounters) && parsedCounters.length > 0) {
-          setCounters(parsedCounters);
-          hasLoadedCounters = true;
+        try {
+          const parsedCounters = JSON.parse(savedCounters);
+          if (Array.isArray(parsedCounters) && parsedCounters.length > 0) {
+            // Ensure we have a proper counters array with all required properties
+            const validCounters = parsedCounters.map(counter => ({
+              name: counter.name || "Unnamed",
+              count: typeof counter.count === 'number' ? counter.count : 0,
+              threshold: typeof counter.threshold === 'number' ? counter.threshold : 10,
+              lastIncrement: counter.lastIncrement || null,
+              lastReset: counter.lastReset || getTodayDateString(),
+              events: Array.isArray(counter.events) ? counter.events : [],
+              activeConsequence: counter.activeConsequence || null
+            }));
+            
+            setCounters(validCounters);
+            console.log("Successfully loaded and validated counters from localStorage:", validCounters);
+            hasLoadedCounters = true;
+          } else {
+            console.warn("Found localStorage counters, but data is invalid:", parsedCounters);
+          }
+        } catch (parseError) {
+          console.error("Error parsing localStorage counters:", parseError);
         }
+      } else {
+        console.warn("No counters found in localStorage");
       }
       
       if (savedStats) {
-        setWeeklyStats(JSON.parse(savedStats));
+        try {
+          const parsedStats = JSON.parse(savedStats);
+          if (parsedStats && typeof parsedStats === 'object') {
+            // Ensure we have a proper stats object with all required properties
+            const validStats = {
+              startDate: parsedStats.startDate || getStartOfWeek(),
+              counts: parsedStats.counts || {},
+              perfectDays: typeof parsedStats.perfectDays === 'number' ? parsedStats.perfectDays : 0
+            };
+            
+            setWeeklyStats(validStats);
+            console.log("Successfully loaded and validated weekly stats from localStorage");
+          } else {
+            setWeeklyStats({
+              startDate: getStartOfWeek(),
+              counts: {},
+              perfectDays: 0
+            });
+            console.warn("Weekly stats data is invalid, initializing new ones");
+          }
+        } catch (parseError) {
+          console.error("Error parsing localStorage stats:", parseError);
+          setWeeklyStats({
+            startDate: getStartOfWeek(),
+            counts: {},
+            perfectDays: 0
+          });
+        }
       } else {
         setWeeklyStats({
           startDate: getStartOfWeek(),
           counts: {},
           perfectDays: 0
         });
+        console.warn("No weekly stats found in localStorage, initializing new ones");
       }
       
       return hasLoadedCounters;
@@ -276,7 +362,8 @@ export const DataProvider = ({ children }) => {
         threshold: threshold,
         lastIncrement: null,
         lastReset: today,
-        events: []
+        events: [],
+        activeConsequence: null
       };
       
       const updatedCounters = [...prevCounters, newCounter];
@@ -319,6 +406,26 @@ export const DataProvider = ({ children }) => {
   const resetEverything = () => {
     clearStorage();
     initializeDefaultCounters();
+  };
+  
+  // Update the active consequence for a counter
+  const updateConsequence = (counterName, consequence) => {
+    setCounters(prevCounters => {
+      const updatedCounters = prevCounters.map(counter => {
+        if (counter.name === counterName) {
+          return {
+            ...counter,
+            activeConsequence: consequence
+          };
+        }
+        return counter;
+      });
+      
+      // Save to localStorage
+      saveToStorage(updatedCounters);
+      
+      return updatedCounters;
+    });
   };
 
   // Get weekly statistics data
@@ -445,7 +552,8 @@ export const DataProvider = ({ children }) => {
       threshold: counter.threshold,
       lastIncrement: null,
       lastReset: today,
-      events: []
+      events: [],
+      activeConsequence: null
     }));
     
     // Mettre à jour les compteurs dans l'état
@@ -488,7 +596,8 @@ export const DataProvider = ({ children }) => {
         getChartData,
         daysBetween,
         getTodayDateString,
-        initializeCounters
+        initializeCounters,
+        updateConsequence
       }}
     >
       {children}
