@@ -832,4 +832,336 @@ input, select {
     .countdown-message {
         font-size: 1.2em;
     }
+    
+    .app-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .tab-btn {
+        flex: 1 0 50%;
+    }
+}
+
+/* New Modernized Styles */
+
+/* App Header Styles */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.app-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.app-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: rgba(255, 105, 180, 0.1);
+    padding: 8px;
+}
+
+.app-title {
+    font-size: 1.5rem;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.app-icon {
+    font-size: 1.2rem;
+}
+
+.app-subtitle {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.app-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* App Tabs */
+.app-tabs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+}
+
+.tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 12px;
+    border: none;
+    background: none;
+    color: #555;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.tab-btn.active {
+    background-color: white;
+    color: var(--main-color);
+    border-bottom: 3px solid var(--main-color);
+    font-weight: 500;
+}
+
+.tab-btn span {
+    font-size: 0.8rem;
+}
+
+/* Counter View Toggle */
+.counter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.view-toggle {
+    display: flex;
+    gap: 5px;
+    background-color: #f5f5f5;
+    padding: 3px;
+    border-radius: 6px;
+}
+
+.view-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    border: none;
+    background: none;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.view-toggle-btn:hover {
+    background-color: rgba(0,0,0,0.1);
+}
+
+.view-toggle-btn.active {
+    background-color: white;
+    color: var(--main-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Counter Views */
+.counters-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    gap: 15px;
+}
+
+.counters-compact {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.counters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Compact Counter Styles */
+.counter-compact {
+    background-color: white;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.counter-compact:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.counter-compact-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.counter-compact-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.counter-compact-stats {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.counter-compact-count {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--main-color);
+}
+
+.counter-compact-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.counter-compact-consequence {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: #f44336;
+    background-color: #fff4f4;
+    padding: 5px 8px;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+/* List View */
+.counter-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: background-color 0.2s ease;
+}
+
+.counter-list-item:hover {
+    background-color: #f9f9f9;
+}
+
+.counter-list-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.counter-list-stats {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.counter-list-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.days-counter {
+    min-width: 30px;
+}
+
+/* Button Styles */
+.compact-increment-btn, 
+.compact-reset-btn, 
+.compact-delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.compact-increment-btn {
+    background-color: var(--main-color);
+    color: white;
+}
+
+.compact-reset-btn {
+    background-color: #76af4d;
+    color: white;
+}
+
+.compact-delete-btn {
+    background-color: #ff6b6b;
+    color: white;
+}
+
+.compact-increment-btn:hover {
+    background-color: #ff5ba7;
+}
+
+.compact-reset-btn:hover {
+    background-color: #669c43;
+}
+
+.compact-delete-btn:hover {
+    background-color: #f44336;
+}
+
+.threshold-badge {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+.threshold-badge.threshold-exceeded {
+    background-color: #ff0000;
+    color: white;
+}
+
+/* Config Panel Embedded Styles */
+.config-panel-embedded {
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+.config-panel-content-embedded {
+    padding: 0;
+    max-height: none;
+    overflow: visible;
 } 

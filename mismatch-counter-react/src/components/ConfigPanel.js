@@ -12,7 +12,7 @@ import ThemeIcon from './ThemeIcon';
 import IconSelector from './IconSelector';
 import FontSelector from './FontSelector';
 
-const ConfigPanel = ({ isVisible, onClose }) => {
+const ConfigPanel = ({ isVisible, onClose, embedded = false }) => {
   const { config, saveConfig, resetConfig, applyTheme } = useConfig();
   const { initializeCounters } = useData();
   
@@ -286,19 +286,27 @@ const ConfigPanel = ({ isVisible, onClose }) => {
     );
   };
   
-  // Si le panneau n'est pas visible, ne rien afficher
-  if (!isVisible) return null;
-  
+  // For embedded mode, check if embedded is true, otherwise check if isVisible is true
+  if (!embedded && !isVisible) return null;
+
+  // Use a different class for embedded mode vs modal mode
+  const configClass = embedded ? "config-panel-embedded" : "config-panel";
+  const contentClass = embedded ? "config-panel-content-embedded" : "config-panel-content";
+
   return (
-    <div className="config-panel">
-      <div className="config-panel-content">
-        <h2>Customize Your Application</h2>
-        <button 
-          className="close-config-btn"
-          onClick={onClose}
-        >
-          &times;
-        </button>
+    <div className={configClass}>
+      <div className={contentClass}>
+        {!embedded && (
+          <>
+            <h2>Customize Your Application</h2>
+            <button 
+              className="close-config-btn"
+              onClick={onClose}
+            >
+              &times;
+            </button>
+          </>
+        )}
         
         <div className="config-tabs">
           <button 

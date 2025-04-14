@@ -3,7 +3,7 @@ import { useConfig } from '../contexts/ConfigContext';
 import { useData } from '../contexts/DataContext';
 import { useBirthday } from '../contexts/BirthdayContext';
 import { useNotifications } from '../contexts/NotificationContext';
-import Header from './Header';
+import AppHeader from './AppHeader';
 import LoveMessage from './LoveMessage';
 import CounterSection from './CounterSection';
 import Footer from './Footer';
@@ -12,19 +12,14 @@ import BirthdayMessage from './BirthdayMessage';
 import ConfigPanel from './ConfigPanel';
 import ChartDashboard from './ChartDashboard';
 import DataManager from './DataManager';
-import NotificationBell from './ui/NotificationBell';
+import { BarChart2, Settings, List, Database } from 'lucide-react';
 
 const MismatchApp = () => {
   const { config, isLoading: configLoading } = useConfig();
   const { isLoading: dataLoading } = useData();
   const { showPreloader, showBirthdayMessage } = useBirthday();
   const { unreadCount } = useNotifications();
-  const [showConfig, setShowConfig] = useState(false);
   const [activeTab, setActiveTab] = useState('counters');
-
-  const toggleConfig = () => {
-    setShowConfig(!showConfig);
-  };
 
   // Force localStorage consistency on app load
   React.useEffect(() => {
@@ -56,34 +51,46 @@ const MismatchApp = () => {
       
       {/* Main App Container */}
       <div className="container" role="main">
-        <Header toggleConfig={toggleConfig}>
-          <NotificationBell />
-        </Header>
-        
-        {/* Configuration Panel */}
-        <ConfigPanel isVisible={showConfig} onClose={toggleConfig} />
+        <AppHeader recipient={config.recipient} sender={config.sender} theme={config.theme} />
         
         <LoveMessage />
         
         {/* Navigation Tabs */}
-        <div className="app-tabs flex border-b mb-6">
+        <div className="app-tabs">
           <button 
-            className={`tab-btn py-2 px-4 font-medium ${activeTab === 'counters' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`tab-btn ${activeTab === 'counters' ? 'active' : ''}`}
             onClick={() => setActiveTab('counters')}
+            title="Counters"
           >
-            Counters
+            <List size={16} />
+            <span>Counters</span>
           </button>
+          
           <button 
-            className={`tab-btn py-2 px-4 font-medium ${activeTab === 'charts' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`tab-btn ${activeTab === 'charts' ? 'active' : ''}`}
             onClick={() => setActiveTab('charts')}
+            title="Analytics"
           >
-            Analytics
+            <BarChart2 size={16} />
+            <span>Analytics</span>
           </button>
+          
           <button 
-            className={`tab-btn py-2 px-4 font-medium ${activeTab === 'data' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`tab-btn ${activeTab === 'data' ? 'active' : ''}`}
             onClick={() => setActiveTab('data')}
+            title="Data Management"
           >
-            Data Management
+            <Database size={16} />
+            <span>Data</span>
+          </button>
+          
+          <button 
+            className={`tab-btn ${activeTab === 'settings' ? 'active' : ''}`}
+            onClick={() => setActiveTab('settings')}
+            title="Settings"
+          >
+            <Settings size={16} />
+            <span>Settings</span>
           </button>
         </div>
         
@@ -91,6 +98,7 @@ const MismatchApp = () => {
         {activeTab === 'counters' && <CounterSection />}
         {activeTab === 'charts' && <ChartDashboard />}
         {activeTab === 'data' && <DataManager />}
+        {activeTab === 'settings' && <ConfigPanel embedded={true} />}
         
         <Footer />
       </div>
