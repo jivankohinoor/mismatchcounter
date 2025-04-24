@@ -1,0 +1,65 @@
+.guided-setup {
+  @apply min-h-screen bg-gray-50 p-8;
+}
+
+.setup-header {
+  @apply text-center mb-8;
+}
+
+.setup-header h1 {
+  @apply text-3xl font-bold text-gray-800 mb-2;
+}
+
+.setup-header p {
+  @apply text-gray-600;
+}
+
+.setup-progress {
+  @apply flex justify-between items-center w-full max-w-4xl mx-auto mb-8;
+}
+
+.step {
+  @apply flex flex-col items-center text-gray-400 relative;
+  @apply flex-1;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  @apply absolute top-4 left-1/2 w-full h-0.5 bg-gray-200;
+  @apply transform -translate-y-1/2;
+}
+
+.step.active {
+  @apply text-blue-600;
+}
+
+.step.completed {
+  @apply text-green-600;
+}
+
+.step-number {
+  @apply w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center;
+  @apply text-sm font-medium;
+}
+
+.step.active .step-number {
+  @apply bg-blue-600 text-white;
+}
+
+.step.completed .step-number {
+  @apply bg-green-600 text-white;
+}
+
+.setup-actions {
+  @apply flex justify-between mt-8 max-w-4xl mx-auto;
+}
+
+.btn-primary {
+  @apply px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700;
+  @apply flex items-center gap-2;
+}
+
+.btn-secondary {
+  @apply px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300;
+  @apply flex items-center gap-2;
+} 

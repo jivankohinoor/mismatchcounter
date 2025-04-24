@@ -1,0 +1,136 @@
+{
+  "project": "AllisonMismatchCounter",
+  "backend": {
+    "framework": "FastAPI",
+    "storage": "local (JSON files)",
+    "files": [
+      {
+        "path": "main.py",
+        "description": "Entry point, application setup, route inclusion",
+        "lines": 50
+      },
+      {
+        "path": "routers/counters.py",
+        "description": "API endpoints for mismatches counters",
+        "lines": 150
+      },
+      {
+        "path": "routers/behaviors.py",
+        "description": "API endpoints for good behaviors",
+        "lines": 150
+      },
+      {
+        "path": "routers/stats.py",
+        "description": "API endpoints for weekly/monthly statistics and reports",
+        "lines": 120
+      },
+      {
+        "path": "routers/auth.py",
+        "description": "Endpoint for secret code validation and unlocking",
+        "lines": 80
+      },
+      {
+        "path": "services/storage.py",
+        "description": "Read/write local JSON data",
+        "lines": 100
+      },
+      {
+        "path": "schemas/models.py",
+        "description": "Pydantic data models for validation and serialization",
+        "lines": 100
+      },
+      {
+        "path": "config.py",
+        "description": "Configurations, constants (secret code, birthday date)",
+        "lines": 30
+      }
+    ]
+  },
+  "frontend": {
+    "framework": "React",
+    "ui": ["Tailwind", "shadcn/ui", "Chart.js"],
+    "state_management": "Zustand",
+    "files": [
+      {
+        "path": "src/main.jsx",
+        "description": "App entry point",
+        "lines": 20
+      },
+      {
+        "path": "src/App.jsx",
+        "description": "Main app component with routing and state context",
+        "lines": 50
+      },
+      {
+        "path": "src/api/apiClient.js",
+        "description": "API client for communication with backend",
+        "lines": 50
+      },
+      {
+        "path": "src/stores/useAppStore.js",
+        "description": "Global state management with Zustand",
+        "lines": 70
+      },
+      {
+        "path": "src/components/BirthdayCountdown.jsx",
+        "description": "Countdown timer and unlock screen",
+        "lines": 100
+      },
+      {
+        "path": "src/components/BirthdayMessage.jsx",
+        "description": "Birthday greeting component",
+        "lines": 40
+      },
+      {
+        "path": "src/components/Tabs.jsx",
+        "description": "Main navigation tabs",
+        "lines": 40
+      },
+      {
+        "path": "src/components/MismatchCounter.jsx",
+        "description": "Mismatch counters management (list, increment, forgive)",
+        "lines": 120
+      },
+      {
+        "path": "src/components/GoodBehaviorTracker.jsx",
+        "description": "Good behaviors management (list, increment)",
+        "lines": 120
+      },
+      {
+        "path": "src/components/Charts.jsx",
+        "description": "Charts visualization with Chart.js",
+        "lines": 100
+      },
+      {
+        "path": "src/components/Achievements.jsx",
+        "description": "Achievements list and notifications",
+        "lines": 80
+      },
+      {
+        "path": "src/components/ExcuseGenerator.jsx",
+        "description": "Randomized excuses modal",
+        "lines": 50
+      },
+      {
+        "path": "src/components/MonthlyReport.jsx",
+        "description": "Monthly reports generation",
+        "lines": 80
+      },
+      {
+        "path": "src/components/UndoSnackbar.jsx",
+        "description": "Undo actions notification",
+        "lines": 60
+      },
+      {
+        "path": "src/utils/helpers.js",
+        "description": "Helper functions (date formatting, random picks, etc.)",
+        "lines": 80
+      },
+      {
+        "path": "src/assets/constants.js",
+        "description": "Default data (counters, behaviors, love messages, excuses)",
+        "lines": 80
+      }
+    ]
+  }
+}

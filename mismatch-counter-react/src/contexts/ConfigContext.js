@@ -1,70 +1,51 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import defaultConfig from '../utils/defaultConfig';
 import profiles from '../utils/profiles';
+import counterTemplates from '../utils/counterTemplates';
 
 // Create a context for the configuration
-export const ConfigContext = createContext();
+const ConfigContext = createContext();
 
 // Create a provider component
 export const ConfigProvider = ({ children }) => {
   const [config, setConfig] = useState(defaultConfig);
+  const [isFirstTime, setIsFirstTime] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
   // Load the configuration from localStorage on component mount
   useEffect(() => {
+    const loadConfig = () => {
+      try {
+        const savedConfig = localStorage.getItem('mismatchConfig');
+        if (savedConfig) {
+          const parsedConfig = JSON.parse(savedConfig);
+          setConfig(parsedConfig);
+          setIsFirstTime(false);
+        }
+      } catch (error) {
+        console.error('Error loading config:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     loadConfig();
   }, []);
-
-  // Function to load configuration
-  const loadConfig = () => {
-    setIsLoading(true);
-    try {
-      const savedConfig = localStorage.getItem('mismatchAppConfig');
-      
-      if (!savedConfig) {
-        console.log("No saved configuration found, using defaults");
-        setConfig(defaultConfig);
-      } else {
-        const parsedConfig = JSON.parse(savedConfig);
-        // Merge with defaults to ensure all required fields exist
-        setConfig(mergeWithDefaults(parsedConfig));
-      }
-    } catch (e) {
-      console.error("Error loading configuration: ", e);
-      setConfig(defaultConfig);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Function to save configuration
   const saveConfig = (newConfig) => {
     try {
-      // Store new config in localStorage
-      localStorage.setItem('mismatchAppConfig', JSON.stringify(newConfig));
-      // Update state
+      localStorage.setItem('mismatchConfig', JSON.stringify(newConfig));
       setConfig(newConfig);
-      // Apply the theme
-      if (newConfig.theme) {
-        applyTheme(newConfig.theme);
-      }
-      return true;
-    } catch (e) {
-      console.error("Error saving configuration: ", e);
-      return false;
+      setIsFirstTime(false);
+    } catch (error) {
+      console.error('Error saving config:', error);
     }
   };
 
   // Function to reset configuration
   const resetConfig = () => {
-    try {
-      localStorage.removeItem('mismatchAppConfig');
-      setConfig(defaultConfig);
-      return true;
-    } catch (e) {
-      console.error("Error resetting configuration: ", e);
-      return false;
-    }
+    saveConfig(defaultConfig);
   };
 
   // Function to validate configuration
@@ -212,94 +193,18 @@ export const ConfigProvider = ({ children }) => {
   };
 
   // Apply theme CSS variables
-  const applyTheme = (theme) => {
-    // Apply main colors
-    document.documentElement.style.setProperty('--main-color', theme.mainColor);
-    document.documentElement.style.setProperty('--secondary-color', theme.secondaryColor);
-    document.documentElement.style.setProperty('--background-color', theme.backgroundColor);
-    document.documentElement.style.setProperty('--font-family', theme.fontFamily);
-    
-    // Convert hex colors to RGB for use with rgba()
-    const hexToRgb = (hex) => {
-      // Remove # if present
-      hex = hex.replace('#', '');
-      
-      // Parse hex values
-      const r = parseInt(hex.substring(0, 2), 16);
-      const g = parseInt(hex.substring(2, 4), 16);
-      const b = parseInt(hex.substring(4, 6), 16);
-      
-      // Return as comma-separated string for CSS variables
-      return `${r}, ${g}, ${b}`;
-    };
-    
-    // Set RGB variables for rgba() usage
-    document.documentElement.style.setProperty('--main-color-rgb', hexToRgb(theme.mainColor));
-    document.documentElement.style.setProperty('--secondary-color-rgb', hexToRgb(theme.secondaryColor));
-    
-    // Set body background to create a soft gradient based on theme colors
-    document.body.style.background = `linear-gradient(135deg, ${theme.backgroundColor} 0%, rgba(${hexToRgb(theme.mainColor)}, 0.05) 100%)`;
-    document.body.style.backgroundAttachment = 'fixed';
-    
-    // Apply fonts
-    document.body.style.fontFamily = theme.fontFamily;
-    
-    // Apply animations based on settings
-    if (config.advanced && config.advanced.enableAnimations === false) {
-      document.documentElement.style.setProperty('--transition-speed', '0s');
-      document.documentElement.style.setProperty('--animation-duration', '0s');
-    } else {
-      document.documentElement.style.setProperty('--transition-speed', '0.3s');
-      document.documentElement.style.setProperty('--animation-duration', '1s');
-    }
-    
-    // Force layout recalculation to ensure theme applies immediately
-    document.body.classList.add('theme-transition');
-    setTimeout(() => {
-      document.body.classList.remove('theme-transition');
-    }, 50);
-  };
-  
-  // Auto-save timer reference
-  let autoSaveTimer = null;
-
-  // Set up auto-save
-  const setupAutoSave = (interval) => {
-    // Clear any existing timer
-    if (autoSaveTimer) {
-      clearInterval(autoSaveTimer);
-    }
-    
-    // Set up new timer if interval is valid
-    if (interval && interval > 0) {
-      autoSaveTimer = setInterval(() => {
-        localStorage.setItem('mismatchAppConfig', JSON.stringify(config));
-        
-        if (config.advanced && config.advanced.debugMode) {
-          console.log("Auto-saved configuration at", new Date().toLocaleTimeString());
-        }
-      }, interval);
-    }
+  const applyTheme = () => {
+    const root = document.documentElement;
+    root.style.setProperty('--primary-color', config.theme.mainColor);
+    root.style.setProperty('--secondary-color', config.theme.secondaryColor);
+    root.style.setProperty('--background-color', config.theme.backgroundColor);
+    root.style.setProperty('--icon-emoji', config.theme.iconEmoji);
+    root.style.setProperty('--font-family', config.theme.fontFamily);
   };
 
-  // Apply theme when config changes
   useEffect(() => {
-    if (!isLoading) {
-      applyTheme(config.theme);
-      
-      // Set up auto-save if enabled
-      if (config.advanced && config.advanced.autoSaveInterval > 0) {
-        setupAutoSave(config.advanced.autoSaveInterval);
-      }
-    }
-    
-    // Cleanup function to clear auto-save timer
-    return () => {
-      if (autoSaveTimer) {
-        clearInterval(autoSaveTimer);
-      }
-    };
-  }, [config]);
+    applyTheme();
+  }, [config.theme]);
 
   // Get default counters based on selected template
   const getDefaultCounters = () => {
@@ -353,23 +258,21 @@ export const ConfigProvider = ({ children }) => {
   };
 
   return (
-    <ConfigContext.Provider 
-      value={{
-        config,
-        isLoading,
-        saveConfig,
-        loadConfig,
-        resetConfig,
-        exportConfig,
-        importConfig,
-        getThemePresets,
-        applyThemePreset,
-        applyTheme,
-        getDefaultCounters,
-        addCustomLoveMessage,
-        addCustomConsequence
-      }}
-    >
+    <ConfigContext.Provider value={{
+      config,
+      saveConfig,
+      resetConfig,
+      isFirstTime,
+      isLoading,
+      exportConfig,
+      importConfig,
+      getThemePresets,
+      applyThemePreset,
+      applyTheme,
+      getDefaultCounters,
+      addCustomLoveMessage,
+      addCustomConsequence
+    }}>
       {children}
     </ConfigContext.Provider>
   );
@@ -378,7 +281,7 @@ export const ConfigProvider = ({ children }) => {
 // Custom hook to use the config context
 export const useConfig = () => {
   const context = useContext(ConfigContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useConfig must be used within a ConfigProvider');
   }
   return context;

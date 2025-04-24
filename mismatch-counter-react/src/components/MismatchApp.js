@@ -12,14 +12,17 @@ import BirthdayMessage from './BirthdayMessage';
 import ConfigPanel from './ConfigPanel';
 import ChartDashboard from './ChartDashboard';
 import DataManager from './DataManager';
-import { BarChart2, Settings, List, Database } from 'lucide-react';
+import { BarChart2, Settings, List, Database, RotateCcw } from 'lucide-react';
+import GuidedSetup from './GuidedSetup';
+import Header from './Header';
 
 const MismatchApp = () => {
-  const { config, isLoading: configLoading } = useConfig();
-  const { isLoading: dataLoading } = useData();
+  const { config, isLoading: configLoading, isFirstTime, resetConfig } = useConfig();
+  const { isLoading: dataLoading, resetData } = useData();
   const { showPreloader, showBirthdayMessage } = useBirthday();
   const { unreadCount } = useNotifications();
   const [activeTab, setActiveTab] = useState('counters');
+  const [showConfig, setShowConfig] = useState(false);
 
   // Force localStorage consistency on app load
   React.useEffect(() => {
@@ -41,6 +44,17 @@ const MismatchApp = () => {
     return <div className="loading">Loading application...</div>;
   }
 
+  if (isFirstTime) {
+    return <GuidedSetup onComplete={() => window.location.reload()} />;
+  }
+
+  const handleResetAll = () => {
+    if (window.confirm('Are you sure you want to reset all data and settings? This cannot be undone.')) {
+      resetConfig();
+      resetData();
+    }
+  };
+
   return (
     <>
       {/* Birthday Preloader */}
@@ -51,6 +65,16 @@ const MismatchApp = () => {
       
       {/* Main App Container */}
       <div className="container" role="main">
+        <Header onConfigClick={() => setShowConfig(true)} />
+        <button 
+          onClick={handleResetAll}
+          className="reset-all-btn"
+          title="Reset all data and settings"
+        >
+          <RotateCcw size={20} />
+        </button>
+        <ConfigPanel isVisible={showConfig} onClose={() => setShowConfig(false)} />
+        
         <AppHeader recipient={config.recipient} sender={config.sender} theme={config.theme} />
         
         <LoveMessage />

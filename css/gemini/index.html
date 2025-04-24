@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allison's Mismatch Counter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #ffe4e1; /* Light pink background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: #ff69b4;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 i {
+            margin-right: 10px;
+        }
+
+        h2 {
+            color: #ff69b4;
+            margin-top: 20px;
+        }
+
+        /* Tab Styles */
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            font-size: 1em;
+            color: #ff69b4;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .tab:hover {
+            background-color: #ffe4e1;
+        }
+
+        .tab.active {
+            background-color: #ff69b4;
+            color: white;
+        }
+
+        /* Counter/Behavior Styles */
+        .counter-container, .behavior-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9f9f9;
+        }
+
+        .counter-name, .behavior-name {
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .counter-count, .behavior-count {
+            font-size: 1.5em;
+            color: #555;
+            margin: 0 10px;
+        }
+
+        .button {
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #ff1493;
+        }
+
+        .button.delete {
+            background-color: #dc143c;
+        }
+
+        .button.delete:hover {
+            background-color: #b22222;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #888;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50; /* Green background */
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 1001;
+            opacity: 0; /* Initially hidden */
+            transition: opacity 0.5s, transform 0.5s;
+            transform: translateX(100%);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.hide {
+          opacity: 0;
+          transform: translateX(100%);
+        }
+
+        /* Charts Styles */
+        #chartCanvas {
+          width: 100%;
+          max-width: 600px;
+          margin: 0 auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .tab {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
+
+            .counter-name, .behavior-name {
+                font-size: 1em;
+            }
+
+            .counter-count, .behavior-count {
+                font-size: 1.2em;
+            }
+
+            .button {
+                padding: 6px 10px;
+                font-size: 0.9em;
+            }
+
+            .toast {
+              padding: 10px 20px;
+              font-size: 0.8em;
+            }
+
+        }
+
+        /* Birthday styles*/
+        #birthdayCountdown {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 50px;
+        }
+
+        #giftBox {
+          width: 150px;
+          height: 150px;
+          background-color: gold; /* or your desired color */
+          margin-bottom: 20px;
+          border-radius: 10px;
+          border: 5px solid #ddd;
+          animation: shake 2s linear infinite;
+        }
+
+        #giftBox::before {
+          content: "";
+          position: absolute;
+          left: 50%;
+          top: 0;
+          width: 10px;
+          height: 150px;
+          background-color: red; /* Ribbon */
+          transform: translateX(-50%);
+        }
+
+        #countdown {
+          font-size: 1.5em;
+        }
+
+        #secretCodeInput {
+          margin-top: 20px;
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+        }
+
+        #unlockButton {
+          padding: 10px 20px;
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          margin-top: 10px;
+        }
+
+        #birthdayMessageContainer{
+          display: none;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-height: 50vh; /* Fill at least the visible viewport height */
+        }
+
+        /* Hidden Content  Styles */
+        .hidden-content {
+          display: none;
+        }
+
+        /* Achievement Badges Style */
+        .achievement-badge{
+          font-size: 1.2em;
+          color: gold; /* Yellow-gold color for badges */
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* A slight shadow for depth */
+          margin-left: 10px; /* Some space to separate it from other elements */
+        }
+
+        /* Footer style */
+        footer {
+          background-color: #f8bbd0; /* Lighter version of pink */
+          color: #333; /* Dark grey/black for better readability */
+          text-align: center; /* Center the text within the footer */
+          padding: 10px 0; /* Give it some spacing */
+          border-radius: 0 0 15px 15px; /* Match the rounded corners */
+          box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for lift */
+          width: 100%; /* Take full width of parent container */
+          max-width: 800px; /* Same as the main container */
+          margin-top: 20px; /* Space from the main content */
+        }
+
+        footer a {
+            color: #795548; /* brown */
+            text-decoration: none; /* No underlines for links */
+            transition: color 0.3s ease; /* Smooth transition on hover */
+        }
+
+        footer a:hover {
+            color: #6d4c41; /* A bit darker shade of brown on hover */
+        }
+
+
+        /*animations */
+        @keyframes shake {
+          0% { transform: rotate(0deg); }
+          25% { transform: rotate(5deg); }
+          50% { transform: rotate(0deg); }
+          75% { transform: rotate(-5deg); }
+          100% { transform: rotate(0deg); }
+        }
+
+        .confetti {
+          width: 10px;
+          height: 10px;
+          background-color: gold;
+          position: absolute;
+          border-radius: 50%;
+          animation: confettiFall linear;
+        }
+
+        @keyframes confettiFall {
+          0% {
+            top: -10%;
+            opacity: 1;
+          }
+          100% {
+            top: 100%;
+            opacity: 0;
+          }
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1><i class="fa fa-heart" aria-hidden="true"></i>Allison's Mismatch Counter <i class="fa fa-heart" aria-hidden="true"></i></h1>
+        <p id="loveMessage"></p>
+        <div id="weeklyStatistics"></div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="mismatches">Mismatches</button>
+            <button class="tab" data-tab="goodBehaviors">Good Behavior</button>
+            <button class="tab" data-tab="charts">Charts</button>
+            <button class="tab" data-tab="achievements">Achievements</button>
+        </div>
+
+        <div id="mismatches" class="tab-content">
+          <h2>Mismatch Counters</h2>
+            <button id="addMismatchButton" class="button">Add New Mismatch</button>
+            <div id="mismatchList"></div>
+        </div>
+
+        <div id="goodBehaviors" class="tab-content hidden-content">
+          <h2>Good Behavior Tracker</h2>
+          <button id="addGoodBehaviorButton" class="button">Add New Good Behavior</button>
+            <div id="goodBehaviorList"></div>
+        </div>
+
+        <div id="charts" class="tab-content hidden-content">
+          <h2>Data Visualization</h2>
+          <select id="chartSelect">
+              <option value="mismatchDistribution">Mismatch Distribution</option>
+              <option value="weeklyTrend">Weekly Trend</option>
+              <option value="goodVsBadBalance">Good vs. Bad Balance</option>
+          </select>
+          <canvas id="chartCanvas"></canvas>
+        </div>
+
+        <div id="achievements" class="tab-content hidden-content">
+            <h2>Achievements</h2>
+            <div id="achievementList"></div>
+        </div>
+
+
+        <div id="undoSnackbar">Undo</div>
+        <button id="resetButton" class="button">Reset All Data</button>
+
+        <!-- Modals -->
+        <div id="addMismatchModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeModal('addMismatchModal')">×</span>
+                <h3>Add New Mismatch</h3>
+                <label for="newMismatchName">Mismatch Name:</label><br>
+                <input type="text" id="newMismatchName" name="newMismatchName"><br><br>
+                <label for="newMismatchThreshold">Threshold:</label><br>
+                <select id="newMismatchThreshold" name="newMismatchThreshold">
+                  <option value="0">No Limit</option>
+                  <option value="3">3</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                </select> <br><br>
+
+                <button class="button" onclick="addMismatch()">Add</button>
+            </div>
+        </div>
+
+        <div id="addGoodBehaviorModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeModal('addGoodBehaviorModal')">×</span>
+                <h3>Add New Good Behavior</h3>
+                <label for="newBehaviorName">Behavior Name:</label><br>
+                <input type="text" id="newBehaviorName" name="newBehaviorName"><br><br>
+                <label for="newBehaviorMilestone">Milestone:</label><br>
+                <select id="newBehaviorMilestone" name="newBehaviorMilestone">
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                </select>
+                <br><br>
+                <button class="button" onclick="addGoodBehavior()">Add</button>
+            </div>
+        </div>
+
+
+        <div id="excuseModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeModal('excuseModal')">×</span>
+                <h3>Random Excuse</h3>
+                <p id="excuseText">Oops! Here's an excuse:</p>
+                <button class="button" onclick="generateExcuse()">Generate New Excuse</button>
+            </div>
+        </div>
+
+        <!-- Achievement Popup -->
+        <div id="toastNotification" class="toast">Achievement Unlocked!</div>
+
+        <div id="thresholdConsequenceModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeModal('thresholdConsequenceModal')">×</span>
+                <h3>Threshold Reached!</h3>
+                <p id="consequenceText">Choose a consequence.</p>
+            </div>
+        </div>
+
+        <div id="monthlyReportModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeModal('monthlyReportModal')">×</span>
+                <h3>Monthly Report</h3>
+                <p id="monthlyReportContent"></p>
+                <button class="button">Download PDF (Not implemented)</button>
+            </div>
+        </div>
+
+
+    </div>
+  <div id="birthdayCountdown" class="hidden-content">
+    <div id="giftBox"></div>
+    <div id="countdown"></div>
+    <input type="password" id="secretCodeInput" placeholder="Enter Secret Code">
+    <button id="unlockButton">Unlock</button>
+  </div>
+
+  <div id="birthdayMessageContainer" class="hidden-content">
+    <h2>Happy Birthday, Allison!</h2>
+    <p>Wishing you a day filled with joy and laughter! This Mismatch Counter is our special way of celebrating you.</p>
+    <button class="button" onclick="showMainApp()">Enter Main Application</button>
+  </div>
+
+  <footer >
+    <p>© 2025 - Made with ❤️  for Allison. <a href="https://example.com">Learn more</a>.</p>
+  </footer>
+
+
+    <script>
+        // Helper function to generate random colors for charts
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // --- General Variables and Initialization ---
+
+        const iconMap = { // Map words to emojis. Extensible.
+            dishwasher: '🍽️',
+            knives: '🔪',
+            mess: '🧹',
+            litter: '🐱',
+            trash: '🗑️',
+            toilet: '🚽',
+            vacuum: '🧹',
+            yelled: '📢',
+            mad: '😡',
+            ai: '🤖',
+            bed: '🛏️',
+            kitchen: '✨',
+            gift: '🎁',
+            date: '❤️',
+            heart: '💖'
+
+        };
+        const defaultCounters = [
+            { name: "Left the dishwasher door open", threshold: 5 },
+            { name: "Put the wrong knives in the dishwasher", threshold: 3 },
+            { name: "Didn't clean my mess before going to bed", threshold: 1 },
+            { name: "Didn't empty the cat litter box", threshold: 2 },
+            { name: "Didn't take out the trash", threshold: 1 },
+            { name: "Didn't put the toilet seat down", threshold: 10 },
+            { name: "Didn't put the vacuum cleaner away", threshold: 5 },
+            { name: "Yelled at you for no reason", threshold: 3 },
+            { name: "Got mad at you for no reason", threshold: 3 },
+            { name: "Talked about AI again...", threshold: 100 }
+        ];
+
+        const defaultGoodBehaviors = [
+          { name: "Made the bed without being asked", milestone: 10 },
+          { name: "Cleaned the kitchen spotless", milestone: 5 },
+          { name: "Surprised you with a gift", milestone: 5 },
+          { name: "Took care of all cat needs", milestone: 10 },
+          { name: "Planned a special date", milestone: 5 }
+        ];
+
+        const consequenceOptions = [
+          "Bring home flowers",
+          "Do all the dishes for a week",
+          "Give Allison a massage",
+          "Plan a special date night",
+          "Take Allison out to her favorite restaurant",
+          "Clean the house top to bottom",
+          "Make Allison breakfast in bed",
+          "Give Allison an extra-long hug",
+          "Watch a movie that Allison picks",
+          "Give Allison a foot rub",
+          "Wash and detail Allison's car",
+          "Bake Allison her favorite dessert",
+          "Take care of all household chores for a week",
+          "Give Allison control of the TV remote for a day",
+          "Offer a sincere apology"
+        ];
+
+        const loveMessages = [
+          "You're the sprinkles on my donut, Allison! 💖",
+          "I love you more than pizza...almost! 🍕",
+          "Life with you is like a rom-com – hilarious and heartwarming! 😂",
+          "You're my favorite notification. 🥰",
+          "I'm so lucky I swiped right on you! 😉",
+          "You're the peanut butter to my jelly. 🥜",
+          "Thanks for being my emergency contact! 🙏",
+          "You're my soulmate... and my best friend. 👯‍♀️",
+          "Together, we're unstoppable! 💪",
+          "My love for you is infinite! ♾️",
+          "You are my sun, my moon, and all my stars. ✨",
+          "With you, every day is Valentine's Day. ❤️",
+          "You make my heart sing. 🎶",
+          "You are the best thing that has ever happened to me.",
+          "I love your smile, your kindness, and everything about you.",
+          "Life with you is an amazing adventure.",
+          "You always know how to make me laugh.",
+          "I cherish every moment we spend together.",
+          "You are my everything, today and always.",
+          "My world is brighter because of you.",
+          "I’m grateful for your love and support."
+        ];
+
+        const randomExcuses = [
+            "The cat made me do it!",
+            "My brain was on vacation.",
+            "I blame the internet.",
+            "It was opposite day.",
+            "I had a momentary lapse of reason.",
+            "I was hacked!",
+            "I thought it was a good idea at the time.",
+            "The aliens made me do it.",
+            "I had a premonition.",
+            "I was sleepwalking.",
+            "I thought I was dreaming.",
+            "I got lost in thought.",
+            "The gravity was off.",
+            "It's a feature, not a bug!",
+            "I ran out of coffee.",
+            "My horoscope told me to.",
+            "It's a work in progress.",
+            "I was just testing you.",
+            "The gremlins did it.",
+            "I have no explanation."
+        ];
+
+        const unlockCode = "happyBirthdayAllison";
+        let birthday = new Date("2025-03-23"); // Year-Month-Day format!
+        const secretCodeInput = document.getElementById('secretCodeInput');
+        const unlockButton = document.getElementById('unlockButton');
+
+        // DOM Elements
+        const loveMessageElement = document.getElementById('loveMessage');
+        const resetButton = document.getElementById('resetButton');
+        const mismatchList = document.getElementById('mismatchList');
+        const goodBehaviorList = document.getElementById('goodBehaviorList');
+        const chartCanvas = document.getElementById('chartCanvas');
+        const chartSelect = document.getElementById('chartSelect');
+        const achievementList = document.getElementById('achievementList');
+
+        let counters = JSON.parse(localStorage.getItem('mismatchCounters')) || {};
+        let goodBehaviors = JSON.parse(localStorage.getItem('goodBehaviors')) || {};
+        let achievements = JSON.parse(localStorage.getItem('achievements')) || {};
+        let weeklyStats = JSON.parse(localStorage.getItem('weeklyStats')) || initializeWeeklyStats();
+        let actionsHistory = JSON.parse(localStorage.getItem('actionsHistory')) || [];
+        let confettiTimer;
+        let confettiCount = 0;
+
+        let myChart;  // Chart.js instance,  accessible to different functions
+        let timeoutId; // variable for toast time outs.
+        let lastAction = null;
+        loadData();
+
+
+        // --- Functions to Create, Update, and Manage Data ---
+        function addMismatch() {
+            const name = document.getElementById('newMismatchName').value;
+            const threshold = document.getElementById('newMismatchThreshold').value;
+            if (!name) return;
+
+            const counterName = name; // Or create unique ID generator.  Simplified for brevity
+
+            const icon = findIcon(name);
+
+            counters[counterName] = {
+                count: 0,
+                threshold: parseInt(threshold),
+                lastIncrement: null,
+                lastReset: null,
+                history: {},
+                icon: icon,
+                customConsequence: null
+            };
+            saveData();
+            renderMismatches();
+            closeModal('addMismatchModal');
+        }
+
+
+        function addGoodBehavior() {
+            const name = document.getElementById('newBehaviorName').value;
+            const milestone = document.getElementById('newBehaviorMilestone').value;
+
+            if (!name) return;
+
+            const behaviorName = name;
+
+            const icon = findIcon(name);
+
+            goodBehaviors[behaviorName] = {
+                count: 0,
+                milestone: parseInt(milestone),
+                lastIncrement: null,
+                history: {},
+                icon: icon
+            };
+            saveData();
+            renderGoodBehaviors();
+            closeModal('addGoodBehaviorModal');
+        }
+
+
+        function incrementCounter(counterName) {
+            counters[counterName].count++;
+            counters[counterName].lastIncrement = new Date().toISOString();
+            recordAction('increment', 'counter', counterName); //Record for Undo
+
+            //History Tracking
+            const today = new Date().toISOString().split('T')[0];
+            if (counters[counterName].history[today]) {
+              counters[counterName].history[today] ++;
+            } else {
+              counters[counterName].history[today] = 1;
+            }
+
+
+            checkThreshold(counterName); //Checking thresholds after increment.
+            saveData();
+            renderMismatches();
+        }
+
+        function recordBehavior(behaviorName) {
+            goodBehaviors[behaviorName].count++;
+            goodBehaviors[behaviorName].lastIncrement = new Date().toISOString();
+             //Record for Undo
+            recordAction('increment', 'behavior', behaviorName);
+
+              //History Tracking
+            const today = new Date().toISOString().split('T')[0];
+            if (goodBehaviors[behaviorName].history[today]) {
+              goodBehaviors[behaviorName].history[today] ++;
+            } else {
+              goodBehaviors[behaviorName].history[today] = 1;
+            }
+
+            checkMilestone(behaviorName);
+            saveData();
+            renderGoodBehaviors();
+        }
+
+        function forgiveCounter(counterName) {
+          const prevCount = counters[counterName].count;
+            counters[counterName].count = 0;
+            counters[counterName].lastReset = new Date().toISOString();
+             //Record for Undo
+            recordAction('reset', 'counter', counterName, prevCount);
+            saveData();
+            renderMismatches();
+            startConfetti(); //Celebration with confetti.
+        }
+
+        function deleteCounter(counterName) {
+          const prevCount = counters[counterName].count;
+          delete counters[counterName];
+          saveData();
+           //Record for Undo
+          recordAction('delete', 'counter', counterName, prevCount,  counters[counterName]); //Save Object state for possible undo.
+          renderMismatches();
+        }
+
+        function deleteBehavior(behaviorName) {
+          const prevCount = goodBehaviors[behaviorName].count;
+          delete goodBehaviors[behaviorName];
+           //Record for Undo
+          recordAction('delete', 'behavior', behaviorName, prevCount,  goodBehaviors[behaviorName] ); //Save Object state for possible undo.
+          saveData();
+          renderGoodBehaviors();
+        }
+
+
+        function checkThreshold(counterName) {
+            if (counters[counterName].threshold > 0 && counters[counterName].count >= counters[counterName].threshold) {
+                // Placeholder: In a real app, you might show a modal with consequence options
+                //Or trigger another functionality
+                openThresholdConsequenceModal(counterName);
+            }
+        }
+
+        function openThresholdConsequenceModal(counterName){
+              document.getElementById("consequenceText").textContent = "Allison must choose an item from a selection."
+              openModal("thresholdConsequenceModal");
+
+              //console.log(`Threshold reached for ${counterName}! Consequence triggered.`);
+        }
+
+        function checkMilestone(behaviorName) {
+            if (goodBehaviors[behaviorName].milestone > 0 && goodBehaviors[behaviorName].count >= goodBehaviors[behaviorName].milestone) {
+                unlockAchievement("Milestone Achievement", `Reached ${goodBehaviors[behaviorName].milestone} ${behaviorName}!`);
+                //Unlock the more generic milestone achievement and then the concrete name
+                unlockAchievement(`${behaviorName} Milestone`, `Reached ${goodBehaviors[behaviorName].milestone} ${behaviorName}!`);
+            }
+        }
+
+
+        // Function to find appropriate emoji icons
+        function findIcon(text) {
+            const lowerText = text.toLowerCase();
+            for (const keyword in iconMap) {
+                if (lowerText.includes(keyword)) {
+                    return iconMap[keyword];
+                }
+            }
+            return '❓'; // Default if not found
+        }
+
+
+        // --- Charting Functions ---
+        function updateChart(chartType) {
+          let labels = [];
+          let data = [];
+
+            switch (chartType) {
+              case 'mismatchDistribution':
+                  labels = Object.keys(counters);
+                  data = labels.map(name => counters[name].count);
+                  createChart(labels, data, "Mismatch Distribution", "Number of Mismatches", "bar");
+                  break;
+                case 'weeklyTrend':
+                      labels = Object.keys(weeklyStats);
+                      const counterTotals = Object.keys(counters).reduce((acc, counter) => {
+                        acc[counter] = 0;
+                        return acc;
+                      }, {});
+                      const goodBehaviorTotals = Object.keys(goodBehaviors).reduce((acc, behavior) => {
+                        acc[behavior] = 0;
+                        return acc;
+                      }, {});
+
+
+                      //Calculate daily cumulative sum.
+                      for (const week in weeklyStats) {
+                         const { counts = {}, goodBehaviorCounts = {} } = weeklyStats[week];
+
+                          //Mismatch Counts Sums
+                           for (const day in counts) {
+                              for (const counter in counts[day]) {
+                                counterTotals[counter] += counts[day][counter];
+                              }
+                           }
+
+                            // Good Behavior Counts Sums
+                           for (const day in goodBehaviorCounts) {
+                              for (const behavior in goodBehaviorCounts[day]) {
+                                 goodBehaviorTotals[behavior] += goodBehaviorCounts[day][behavior];
+                                 }
+                            }
+                       }
+
+
+                     let mismatchSums = Object.values(counterTotals);
+                     let behaviorSums = Object.values(goodBehaviorTotals);
+                     createMultiChart(Object.keys(counterTotals), mismatchSums, Object.keys(goodBehaviorTotals), behaviorSums, "Weekly Trend Analysis")
+
+                     break;
+               case 'goodVsBadBalance':
+                      const goodTotal = Object.values(goodBehaviors).reduce((sum, behavior) => sum + behavior.count, 0);
+                      const badTotal = Object.values(counters).reduce((sum, counter) => sum + counter.count, 0);
+
+                      labels = ["Good Behaviors", "Mismatches"];
+                      data = [goodTotal, badTotal];
+                      createChart(labels, data, "Good vs. Bad Balance", "Total Count", "pie");
+
+                      break;
+
+              default:
+                  console.warn('Unknown chart type: ${chartType}');
+            }
+        }
+
+         function createChart(labels, data, title, yAxisLabel, type) {
+          const ctx = document.getElementById('chartCanvas').getContext('2d');
+           // Destroy old instances
+          if (myChart) {
+            myChart.destroy();
+          }
+
+
+           myChart = new Chart(ctx, {
+            type: type,
+            data: {
+              labels: labels,
+              datasets: [{
+                label: yAxisLabel,
+                data: data,
+                backgroundColor: labels.map(() => getRandomColor()), //Provide default colours for demonstration if no chartData colours.
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false, //Allows more fine grain chart.
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  title: {
+                    display: true,
+                    text: yAxisLabel
+                  }
+                }
+              },
+              plugins: {
+                title: {
+                  display: true,
+                  text: title,
+                  font: {
+                    size: 16
+                  }
+                }
+              }
+            }
+          });
+        }
+
+
+      function createMultiChart(labelsCounters, dataCounters, labelsBehaviors, dataBehaviors, title) {
+           const ctx = document.getElementById('chartCanvas').getContext('2d');
+
+          // Destroy old instances
+          if (myChart) {
+            myChart.destroy();
+          }
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                  labels: labelsCounters,  //Can also be behavior labels
+                  datasets: [
+                    {
+                      label: 'Mismatches',
+                      data: dataCounters,
+                      borderColor: 'rgba(255, 99, 132, 1)',
+                      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                      fill: false
+                    },
+                    {
+                      label: 'Good Behaviors',
+                      data: dataBehaviors,
+                      borderColor: 'rgba(54, 162, 235, 1)',
+                      backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                      fill: false
+                    }
+                  ]                  
+
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false, //Allows more fine grain chart.
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Count'
+                }
+              }
+            },
+            plugins: {
+              title: {
+                display: true,
+                text: title,
+                font: {
+                  size: 16
+                }
+              }
+            }
+          }
+        });
+      }
+
+      chartSelect.addEventListener('change', () => {
+        updateChart(chartSelect.value);
+      });
+
+
+        // --- Achievement Functions ---
+      function unlockAchievement(achievementId, achievementDetails) {
+
+        if (!achievements[achievementId]) {
+           achievements[achievementId] = {
+               date: new Date().toISOString(),
+               details: achievementDetails
+           };
+           showToast("Achievement Unlocked!");  //Show a toast message.
+           saveData();
+           renderAchievements();
+        }
+      }
+
+
+    //---Undo functionalities--
+      function recordAction(actionType, dataType, itemName, oldValue, oldObj) {
+        // Construct undo action data.
+         lastAction = {
+             actionType,
+             dataType,
+             itemName,
+             oldValue,
+             oldObj, //old obj
+         };
+
+         actionsHistory.push(lastAction);
+
+        // Keep history limited for space and convenience,  maybe 10 entries for a quick undo
+        if (actionsHistory.length > 10) {
+            actionsHistory.shift();  // FIFO structure of actionHistory stack.
+        }
+
+        //Store this to memory.
+        localStorage.setItem('actionsHistory', JSON.stringify(actionsHistory));
+
+
+        const snackbar = document.getElementById("undoSnackbar");
+        snackbar.textContent = 'Undo'; //Can customize message if required.
+        snackbar.style.display = "block";
+          snackbar.style.color = 'white';
+
+        //Make it a inline onclick func, no  global listeners required.
+
+        snackbar.onclick = function() {
+             undoLastAction();
+             snackbar.style.display = "none"; // Hide if action is processed.
+
+        }
+        setTimeout(function(){
+          snackbar.style.display = "none";
+           }, 5000); // Undo available in 5 sec.
+        console.log("ACTIONS ",actionsHistory)
+
+
+      }
+        function undoLastAction() {
+          console.log("ACTIONS ",actionsHistory)
+          if (actionsHistory.length === 0) {
+            console.log("No actions to undo.");
+            return; //Exit here since we can not proceed if empty.
+          }
+          console.log("Before:",lastAction);
+          const undoAction = actionsHistory.pop();
+          //remove in array locally.
+           localStorage.setItem('actionsHistory', JSON.stringify(actionsHistory));
+           lastAction = null;//unset for multiple call avoidance
+          console.log("Undoing: ",undoAction)
+          console.log("After:", lastAction)
+
+
+            switch (undoAction.actionType) {
+              case 'increment':
+                  //If undone count > 0 then reduce other wise remove entirely
+                   if(undoAction.dataType =="counter"){
+                       counters[undoAction.itemName].count--; //
+                        counters[undoAction.itemName].count = Math.max(0,  counters[undoAction.itemName].count ); // prevent neg
+                       counters[undoAction.itemName].lastIncrement = new Date().toISOString();
+
+                        saveData();
+                        renderMismatches();
+                     }
+
+                      if(undoAction.dataType =="behavior"){
+
+                       goodBehaviors[undoAction.itemName].count-- //
+                        goodBehaviors[undoAction.itemName].count = Math.max(0,  goodBehaviors[undoAction.itemName].count); //Prevent negatives.
+
+                       goodBehaviors[undoAction.itemName].lastIncrement = new Date().toISOString();
+
+                       saveData();
+                       renderGoodBehaviors();
+                     }
+
+                   break;
+
+                case 'reset':
+                  if(undoAction.dataType == "counter") {
+
+                      counters[undoAction.itemName].count = undoAction.oldValue; //Previous val
+                      counters[undoAction.itemName].lastReset = new Date().toISOString();
+                       //Since has original states need be persistent
+
+                       saveData();
+                       renderMismatches();
+                  }
+
+                 break;
+
+                case 'delete':
+
+                    //In these operations also recover thresholds etc as preexisted
+                     if(undoAction.dataType == "counter") {
+
+                          counters[undoAction.itemName] =  undoAction.oldObj;
+
+                         //Restore what  original state
+                          saveData();
+                          renderMismatches();
+                    }
+                    //Same concept repeated again but now using another store.
+                   if(undoAction.dataType =="behavior") {
+                        goodBehaviors[undoAction.itemName] = undoAction.oldObj;
+
+                          saveData();
+                          renderGoodBehaviors(); //Rendering is imperative.  These are views to data now existent in mem again
+
+                     }
+
+                    break;
+
+                  default:
+                    console.warn("Unspecified Operation Type!");
+
+              }
+             console.warn("ACTION_HIST is " + actionsHistory); //Tracking how progresses
+
+        }
+
+
+
+        // --- Excuse Functions ---
+        function generateExcuse() {
+            const excuse = randomExcuses[Math.floor(Math.random() * randomExcuses.length)];
+            document.getElementById('excuseText').innerText = excuse;
+        }
+
+
+        // --- Local Storage and Data Management ---
+      function initializeWeeklyStats() {
+
+          let today = new Date();
+          let startDate = new Date(today);
+
+          // If today is not Sunday (0), subtract days until we get to Sunday.
+          if (today.getDay() !== 0) {
+              startDate.setDate(today.getDate() - today.getDay());
+          }
+
+
+        const dateStr = startDate.toISOString().split('T')[0];  //Ensure dates only
+
+
+          return { [dateStr] :  { counts: {}, goodBehaviorCounts: {}, perfectDays:0  }  };
+
+      }
+
+      function updateWeeklyStats() {
+
+         const today = new Date().toISOString().split('T')[0]; //Current Days now
+
+          for (const counterName in counters) {
+            if (counters.hasOwnProperty(counterName)) {
+              if (!weeklyStats[today]) weeklyStats[today] = { counts: {}, goodBehaviorCounts: {}, perfectDays: 0}; //Creates the base.
+
+               weeklyStats[today].counts[counterName] = counters[counterName].count; //
+             }
+
+          }
+
+
+         for(const behaviorName in goodBehaviors) {
+            if (goodBehaviors.hasOwnProperty(behaviorName)) {
+               if (!weeklyStats[today]) weeklyStats[today] = { counts: {}, goodBehaviorCounts: {}, perfectDays: 0 }; // Ensure base stats.
+
+
+                weeklyStats[today].goodBehaviorCounts[behaviorName] = goodBehaviors[behaviorName].count; //Track
+            }
+
+
+          }
+
+            // Perfect Day count. For simple scenario tracking, assumes Sunday resets to check weekly performances.. more intricate functions available.
+            let hasMismatch = false; //Track mismatched
+
+
+            for (const counterName in counters) {
+                if (counters.hasOwnProperty(counterName) && counters[counterName].count > 0) {
+                  hasMismatch = true; //Set true condition..
+
+                  break; //Only single fault trips overall tracker
+                }
+            }
+
+           weeklyStats[today].perfectDays = !hasMismatch ? 1 : 0;
+
+      }
+
+
+      function loadData() {
+        counters = JSON.parse(localStorage.getItem('mismatchCounters')) || {};
+        goodBehaviors = JSON.parse(localStorage.getItem('goodBehaviors')) || {};
+        achievements = JSON.parse(localStorage.getItem('achievements')) || {};
+
+        renderMismatches();
+        renderGoodBehaviors();
+        renderAchievements();
+        updateWeeklyStats(); // Weekly Tracking
+        renderWeeklyStatistics();
+        setRandomLoveMessage();  //Default Load set
+        updateChart('mismatchDistribution');   //Default selected chart load
+
+      }
+
+        function saveData() {
+            localStorage.setItem('mismatchCounters', JSON.stringify(counters));
+            localStorage.setItem('goodBehaviors', JSON.stringify(goodBehaviors));
+            localStorage.setItem('achievements', JSON.stringify(achievements));
+        }
+
+      function resetAllData() {
+            localStorage.clear(); // Clear
+            counters = {};
+            goodBehaviors = {};
+            achievements = {};
+
+              actionsHistory = [];//Resets
+
+            localStorage.setItem("actionsHistory", JSON.stringify([])) //reset to blank!
+
+
+
+            weeklyStats = initializeWeeklyStats();// Re set and store if required.
+            localStorage.setItem("weeklyStats", JSON.stringify(weeklyStats));
+
+
+          location.reload()// reload to reflect resets fully
+      }
+
+
+        // --- UI Rendering Functions ---
+
+      function renderMismatches() {
+        mismatchList.innerHTML = ''; // Clear current rendering
+           const counterEntries = Object.entries(counters);
+
+             // Sort By counters for usability and ordering now.
+
+          counterEntries.sort(([, counterA], [, counterB]) => {
+
+              return counterB.count - counterA.count //Most frequent by order shown now.
+          });
+
+
+         counterEntries.forEach(([name, counter]) => {
+
+              const counterDiv = document.createElement('div');
+              counterDiv.classList.add('counter-container');
+
+               const icon = findIcon(name); //Fetch dynamic ones otherwise load fallback below..
+                const daysWithout = counter.lastReset ? Math.floor((new Date() - new Date(counter.lastReset)) / (1000 * 60 * 60 * 24)) : null;
+
+
+               let dayWithoutMessage= daysWithout == 1  ? `last fixed 1 day ago`: `${daysWithout} day${daysWithout === 1 ? '' : 's'} ago. `
+
+
+              counterDiv.innerHTML = `
+                  <div class="counter-name">${icon} ${name}</div>
+                  <div class="counter-count">${counter.count}</div>
+
+                    ${counter.lastReset  ? dayWithoutMessage : 'First Offence..'}
+
+
+                  <div>
+                      <button class="button" onclick="incrementCounter('${name}')">+</button>
+                      <button class="button delete" onclick="deleteCounter('${name}')">Delete</button>
+                      <button class="button forgive" onclick="forgiveCounter('${name}')">Forgive</button>
+                  </div>
+                  ${counter.threshold > 0 && counter.count >= counter.threshold ? '<span style="color:red">Threshold Reached!</span>' : ''}
+              `;
+              mismatchList.appendChild(counterDiv);
+          });
+      }
+
+
+      function renderGoodBehaviors() {
+          goodBehaviorList.innerHTML = ''; //Clear current list fully and reload
+
+          //Get
+            const behaviorEntries = Object.entries(goodBehaviors); //Key, item
+
+          behaviorEntries.sort(([, behaviorA], [, behaviorB]) => {
+               return behaviorB.count - behaviorA.count//Orders highest in listing here.
+            });
+
+          //Append again
+         behaviorEntries.forEach(([name, behavior]) => {
+
+            const behaviorDiv = document.createElement('div');
+              behaviorDiv.classList.add('behavior-container');
+             const daysSinceLast= behavior.lastIncrement? Math.floor((new Date() - new Date(behavior.lastIncrement ))/ (1000* 60* 60*24)   ):  null
+
+           //Condition checks based days.
+
+
+              let dateText = behavior.lastIncrement  ? daysSinceLast ===1  ?` last action 1 day ago.` :  `Last good actions ${daysSinceLast} days ago.`:'Initial Data Point.'
+
+             const hasReachedMilestone = behavior.count >= behavior.milestone
+
+              behaviorDiv.innerHTML = `
+                <div class="behavior-name">${behavior.icon} ${name}</div>
+                  <div class="behavior-count">${behavior.count}</div>
+                     ${dateText}
+
+                  <div>
+                    <button class="button" onclick="recordBehavior('${name}')">+</button>
+                     <button class="button delete" onclick="deleteBehavior('${name}')">Delete</button>
+                  </div>
+
+                   ${hasReachedMilestone  ?  '<span class="achievement-badge"> <i class="fa fa-star" aria-hidden="true"></i> Milestone</span>' : ''}
+
+               `;
+              goodBehaviorList.appendChild(behaviorDiv);
+        });
+      }
+
+
+      function renderAchievements() {
+        achievementList.innerHTML = '';//Reset the current states on memory for fully refreshing on memory loads.
+
+              Object.entries(achievements).forEach(([id, achievement]) => { //Keys from local stroes now loaded
+
+                   const achievementDiv = document.createElement('div');
+
+                  achievementDiv.classList.add("achievemetns");//Attach classnames if needs additional styling or function to make better
+
+
+                    achievementDiv.innerHTML = `
+                     <p><i class="fa fa-trophy"></i> <strong>${id}:</strong> ${achievement.details} - ${new Date(achievement.date).toLocaleDateString()}</p>`;  //Formats with toLocal
+                     achievementList.appendChild(achievementDiv)
+                 });
+           }
+
+      // Randomly choose loveMessage during runtime
+          function setRandomLoveMessage() {
+
+              const randomIndex = Math.floor(Math.random() * loveMessages.length);
+              loveMessageElement.innerText = loveMessages[randomIndex];
+          }
+
+
+        function renderWeeklyStatistics() {
+
+            const startDate = Object.keys(weeklyStats)[0];
+            const endDate = new Date().toISOString().split('T')[0];
+             // Calculate range etc
+
+             let report =
+                 `<p>Weekly Report from ${startDate} to ${endDate}:</p>
+                   <p> This report covers a general scope from that era`
+
+             document.getElementById("weeklyStatistics").innerHTML = report//Attaching here or format later based view.
+
+      }
+
+
+
+      // --- Birthday &  Celebrations ---
+        function calculateCountdown() {
+            const now = new Date();
+            let timeLeft = birthday.getTime() - now.getTime();
+             //Handle Past Years:
+
+
+             if (timeLeft < 0) {
+                 let nextBirthday = new Date(birthday); // Ensure we deal Date copies!
+                   nextBirthday.setFullYear(now.getFullYear() + 1);
+
+                     //If now beyond end  we assume
+                  timeLeft = nextBirthday.getTime() - now.getTime();  //Resetting  diff calculation
+               }
+
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+
+             return`${days}d ${hours}h ${minutes}m ${seconds}s`;//Formatting more common syntax instead direct writing.
+        }
+
+        function updateCountdown() {
+            const countdownElement = document.getElementById('countdown');
+
+             //Update at 1 secs!
+
+              countdownElement.textContent = calculateCountdown()
+        }
+
+
+       //Confetti function handlers
+       function startConfetti() {
+
+        if (confettiTimer) {
+          clearInterval(confettiTimer);
+          confettiTimer = null; //Clear intervals prevents stack ups.
+        }
+
+        for (let i = 0; i < 50; i++) { //Generate the base.
+              createConfetti() //Invoke once more than initially set on creation... avoids double triggers if events collide or some oddity arises (mostly paranoia/robustnes)
+        }
+
+         //Init once so ensure if multiple actions get taken one stops old loop
+
+            confettiTimer = setInterval(() => {
+
+                    if(confettiCount++ >10)  clearConfetti();
+
+                      else generateMoreConfetti();
+
+              }  ,250); //
+
+       }
+        function generateMoreConfetti(){ // more at same rates etc
+
+           for (let i = 0; i <10; i++) {  // generates bits
+              createConfetti()// and spread  each set with some diversity each execution to expand!
+           }
+         }
+
+          function createConfetti() {
+
+              const confetti = document.createElement('div');  //Create this as local! Avoid clashes and garbage from global
+
+                 confetti.classList.add('confetti'); //Applying styling  we specify... important
+
+                   confetti.style.left = Math.random() * 100 + '%'; // spreading from to edge.. 0
+
+                 confetti.style.animationDuration = Math.random() * 3 + 2 + 's';   //
+
+              document.body.appendChild(confetti)   // Add only on create not batch operation!!  otherwise timing get bork
+
+               confetti.addEventListener('animationend', () => confetti.remove()); // removing listener... more perform.
+
+          }
+
+
+            function clearConfetti() {
+
+                 if (confettiTimer) {//Double verify not racing.
+
+                      clearInterval(confettiTimer);//Stop intervals  as pre processes!
+
+
+                           const confettiElements = document.querySelectorAll('.confetti');// fetch live nodel list
+
+                            confettiElements.forEach(confetti => confetti.remove());  // remove bits
+                                 confettiCount= 0//rest if requires
+
+
+                           clearInterval(confettiTimer);//Reensure clears the intervals set
+
+                      confettiTimer = null //And assign the core interval handle back void. for avoid over stacks;
+                    }
+                }
+
+
+
+
+        function checkBirthday() {
+            const now = new Date();
+            if (now >= birthday) {
+                document.getElementById('birthdayCountdown').classList.add('hidden-content');
+                document.getElementById('birthdayMessageContainer').classList.remove('hidden-content');
+                document.querySelector(".container").classList.remove("hidden-content");
+                //After it is after birthday unlock main applicatiosn to proceed from initialization
+                clearInterval(birthdayInterval); //After done not bother more... otherwise continues executions un desired.
+            }
+
+        }
+
+      const birthdayInterval = setInterval(checkBirthday, 1000);
+
+
+         function initializeApplicationFlow () {
+
+                checkBirthday();   //
+                updateCountdown(); // ensure
+
+                setInterval(updateCountdown, 1000);
+          }
+
+
+
+
+        // --- Modal Functions ---
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // --- Toast Notification ---
+        function showToast(message) {
+
+             const toast = document.getElementById("toastNotification");
+             toast.textContent = message;
+             toast.classList.add("show");
+
+           //Clear Existing!  or prevent overload the display
+          if(timeoutId)  {clearTimeout(timeoutId)} //prev prevent new before run ends
+
+           timeoutId = setTimeout(() => {
+               toast.classList.remove("show");
+               toast.classList.add("hide");
+           }, 3000); //Display Timeout
+
+         }
+
+        // --- Tab Functionality ---
+        function openTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabContents.forEach(content => content.classList.add('hidden-content'));
+
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(tabName).classList.remove('hidden-content');
+        }
+        // Secret code check.
+       function checkSecretCode() {
+
+            if (secretCodeInput.value === unlockCode) {
+
+                 document.getElementById('birthdayCountdown').classList.add('hidden-content'); //Hidden from here as process
+                 document.getElementById('birthdayMessageContainer').classList.remove('hidden-content');//And view result for usage otherwise lock or infinite loads
+                   document.querySelector(".container").classList.remove("hidden-content"); //Enables this section only!! Main
+
+
+             //if unlocked then hide/reset  ... better than on off switches... prevent misuse and cleanups too!
+
+               }
+
+        else
+
+                 { alert('Incorrect code. Please try again.');}// otherwise repeat and no proceeed further;
+
+           }
+
+      unlockButton.addEventListener("click", function (event) {
+
+         checkSecretCode();
+      })
+
+
+          //After Valid process unlocks.. so can function like after date reaches
+        function showMainApp(){
+
+          document.getElementById('birthdayMessageContainer').classList.add('hidden-content');
+
+          document.querySelector(".container").classList.remove("hidden-content")
+
+
+        }
+
+
+
+        // --- Event Listeners ---
+
+        //Button  modal create
+        document.getElementById('addMismatchButton').addEventListener('click', () => openModal('addMismatchModal'));
+        document.getElementById('addGoodBehaviorButton').addEventListener('click', () => openModal('addGoodBehaviorModal'));
+        //Register reset listener
+
+        resetButton.addEventListener('click', resetAllData);
+        //Default view is not displayed if Birthday Lock not clear;
+        document.querySelector(".container").classList.add('hidden-content')//Initially set invisible during countdown stage otherwise loads;
+
+           //Event registrations tab navs:
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', (event) => {
+                const tabName = event.target.dataset.tab;
+                openTab(tabName);
+
+                   //For chart selection reload otherwise is empty!! If does not load the right frame will keep blanked even click others and never trigger right call;
+                  if(tabName== 'charts')   updateChart(chartSelect.value);
+                  //Needs the reload event triggered with selection.
+              });
+        });
+
+          loveMessageElement //Starts this with load time
+         setInterval(setRandomLoveMessage, 5000)//Time Intervals otherwise
+           setRandomLoveMessage();
+
+
+            initializeApplicationFlow ();  //Start it
+    </script>
+</body>
+</html>

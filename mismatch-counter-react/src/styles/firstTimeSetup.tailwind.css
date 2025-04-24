@@ -1,0 +1,133 @@
+.first-time-setup {
+  @apply min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50;
+}
+
+.setup-header {
+  @apply text-center mb-8;
+}
+
+.setup-header h1 {
+  @apply text-3xl font-bold text-gray-800 mb-2;
+}
+
+.setup-header p {
+  @apply text-gray-600;
+}
+
+.setup-progress {
+  @apply flex justify-between items-center w-full max-w-md mb-8;
+}
+
+.step {
+  @apply flex flex-col items-center text-gray-400;
+}
+
+.step.active {
+  @apply text-blue-600;
+}
+
+.step svg {
+  @apply mb-2;
+}
+
+.step span {
+  @apply text-sm font-medium;
+}
+
+.setup-form {
+  @apply w-full max-w-md bg-white rounded-lg shadow-lg p-6;
+}
+
+.form-step {
+  @apply space-y-4;
+}
+
+.form-step h2 {
+  @apply text-xl font-semibold text-gray-800 mb-4;
+}
+
+.form-group {
+  @apply space-y-2;
+}
+
+.form-group label {
+  @apply block text-sm font-medium text-gray-700;
+}
+
+.form-group input[type="text"],
+.form-group textarea,
+.form-group select {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+}
+
+.form-group textarea {
+  @apply h-24 resize-none;
+}
+
+.form-group input[type="color"] {
+  @apply w-full h-10 p-1 border border-gray-300 rounded-md cursor-pointer;
+}
+
+.preview {
+  @apply mt-6 p-4 border border-gray-200 rounded-lg;
+}
+
+.preview-header {
+  @apply mb-4;
+}
+
+.preview-header h3 {
+  @apply text-lg font-medium text-gray-800;
+}
+
+.preview-content {
+  @apply space-y-2 text-gray-600;
+}
+
+.form-actions {
+  @apply flex justify-between mt-6;
+}
+
+.btn-primary {
+  @apply px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+}
+
+.templates-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.template-card {
+  @apply p-4 border border-gray-200 rounded-lg cursor-pointer transition-all duration-200;
+}
+
+.template-card:hover {
+  @apply border-blue-500 shadow-md;
+}
+
+.template-card.selected {
+  @apply border-blue-500 bg-blue-50;
+}
+
+.template-card h3 {
+  @apply text-lg font-semibold text-gray-800;
+}
+
+.template-card p {
+  @apply text-sm text-gray-600;
+}
+
+.button-group {
+  @apply flex justify-between mt-8;
+}
+
+.primary-btn {
+  @apply px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200;
+}
+
+.secondary-btn {
+  @apply px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200;
+} 

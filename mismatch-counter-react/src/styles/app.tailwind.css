@@ -1,0 +1,10 @@
+.reset-all-btn {
+  @apply fixed bottom-4 right-4 p-3 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors duration-200 z-50;
+  @apply flex items-center justify-center;
+  @apply text-gray-600 hover:text-gray-800;
+  @apply border border-gray-200;
+}
+
+.reset-all-btn:hover {
+  @apply transform scale-110;
+} 

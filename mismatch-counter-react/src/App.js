@@ -19,6 +19,8 @@ import './styles/notifications.css'; // New notifications styles
 
 // New layout improvements
 import './styles/layout-improvements.css';
+import './styles/app.tailwind.css';
+import './styles/guidedSetup.tailwind.css';
 
 function App() {
   return (

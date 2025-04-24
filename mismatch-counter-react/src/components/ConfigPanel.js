@@ -12,12 +12,12 @@ import ThemeIcon from './ThemeIcon';
 import IconSelector from './IconSelector';
 import FontSelector from './FontSelector';
 
-const ConfigPanel = ({ isVisible, onClose, embedded = false }) => {
+const ConfigPanel = ({ isVisible, onClose, embedded = false, activeTab: initialActiveTab }) => {
   const { config, saveConfig, resetConfig, applyTheme } = useConfig();
   const { initializeCounters } = useData();
   
   // Onglets de configuration
-  const [activeTab, setActiveTab] = useState('basic');
+  const [activeTab, setActiveTab] = useState(initialActiveTab || 'basic');
   
   // État local pour les valeurs du formulaire
   const [formData, setFormData] = useState({
@@ -115,6 +115,13 @@ const ConfigPanel = ({ isVisible, onClose, embedded = false }) => {
       });
     }
   }, [config]);
+  
+  // Update activeTab when initialActiveTab changes
+  useEffect(() => {
+    if (initialActiveTab) {
+      setActiveTab(initialActiveTab);
+    }
+  }, [initialActiveTab]);
   
   // Gérer les changements d'onglets
   const handleTabChange = (tab) => {
@@ -294,58 +301,45 @@ const ConfigPanel = ({ isVisible, onClose, embedded = false }) => {
   const contentClass = embedded ? "config-panel-content-embedded" : "config-panel-content";
 
   return (
-    <div className={configClass}>
-      <div className={contentClass}>
-        {!embedded && (
-          <>
-            <h2>Customize Your Application</h2>
-            <button 
-              className="close-config-btn"
-              onClick={onClose}
-            >
-              &times;
-            </button>
-          </>
-        )}
-        
-        <div className="config-tabs">
-          <button 
-            className={`config-tab ${activeTab === 'basic' ? 'active' : ''}`} 
-            onClick={() => handleTabChange('basic')}
-          >
-            Basic Info
-          </button>
-          <button 
-            className={`config-tab ${activeTab === 'appearance' ? 'active' : ''}`} 
-            onClick={() => handleTabChange('appearance')}
-          >
-            Appearance
-          </button>
-          <button 
-            className={`config-tab ${activeTab === 'templates' ? 'active' : ''}`} 
-            onClick={() => handleTabChange('templates')}
-          >
-            Templates
-          </button>
-          <button 
-            className={`config-tab ${activeTab === 'messages' ? 'active' : ''}`} 
-            onClick={() => handleTabChange('messages')}
-          >
-            Messages
-          </button>
-          <button 
-            className={`config-tab ${activeTab === 'advanced' ? 'active' : ''}`} 
-            onClick={() => handleTabChange('advanced')}
-          >
-            Advanced
-          </button>
-          <button 
-            className={`config-tab ${activeTab === 'import-export' ? 'active' : ''}`} 
-            onClick={() => handleTabChange('import-export')}
-          >
-            Import/Export
+    <div className={`config-panel ${isVisible ? 'visible' : ''} ${embedded ? 'embedded' : ''}`}>
+      {!embedded && (
+        <div className="config-panel-header">
+          <h2>Configuration</h2>
+          <button className="close-btn" onClick={onClose}>
+            ×
           </button>
         </div>
+      )}
+      
+      <div className={contentClass}>
+        {!embedded && (
+          <div className="config-tabs">
+            <button 
+              className={`tab ${activeTab === 'basic' ? 'active' : ''}`}
+              onClick={() => handleTabChange('basic')}
+            >
+              Basic
+            </button>
+            <button 
+              className={`tab ${activeTab === 'theme' ? 'active' : ''}`}
+              onClick={() => handleTabChange('theme')}
+            >
+              Theme
+            </button>
+            <button 
+              className={`tab ${activeTab === 'messages' ? 'active' : ''}`}
+              onClick={() => handleTabChange('messages')}
+            >
+              Messages
+            </button>
+            <button 
+              className={`tab ${activeTab === 'advanced' ? 'active' : ''}`}
+              onClick={() => handleTabChange('advanced')}
+            >
+              Advanced
+            </button>
+          </div>
+        )}
         
         <form onSubmit={handleSubmit}>
           {/* Section Informations de base */}
@@ -412,7 +406,7 @@ const ConfigPanel = ({ isVisible, onClose, embedded = false }) => {
           </div>
           
           {/* Section Apparence */}
-          <div className={`config-section ${activeTab === 'appearance' ? 'active' : ''}`}>
+          <div className={`config-section ${activeTab === 'theme' ? 'active' : ''}`}>
             <h3>Apparence</h3>
             
             <ThemePreview 
@@ -484,16 +478,7 @@ const ConfigPanel = ({ isVisible, onClose, embedded = false }) => {
             </div>
           </div>
           
-          {/* Section Templates */}
-          <div className={`config-section ${activeTab === 'templates' ? 'active' : ''}`}>
-            <h3>Templates</h3>
-            <CounterTemplateSelector
-              selectedTemplate={formData.selectedTemplate}
-              onSelectTemplate={handleTemplateChange}
-            />
-          </div>
-          
-          {/* Messages Section */}
+          {/* Section Messages */}
           <div className={`config-section ${activeTab === 'messages' ? 'active' : ''}`}>
             <h3>Messages</h3>
             <div className="form-group">
@@ -845,6 +830,17 @@ const ConfigPanel = ({ isVisible, onClose, embedded = false }) => {
           </div>
         </form>
       </div>
+      
+      {!embedded && (
+        <div className="config-panel-footer">
+          <button className="btn-secondary" onClick={handleResetConfig}>
+            Reset
+          </button>
+          <button className="btn-primary" onClick={handleSubmit}>
+            Save
+          </button>
+        </div>
+      )}
     </div>
   );
 };

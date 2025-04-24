@@ -8,7 +8,7 @@ const LoveMessage = () => {
   
   // Set initial message
   useEffect(() => {
-    if (config && config.messages && config.messages.loveMessages && config.messages.loveMessages.length > 0) {
+    if (config?.messages?.loveMessages?.length > 0) {
       const randomIndex = Math.floor(Math.random() * config.messages.loveMessages.length);
       setMessage(config.messages.loveMessages[randomIndex]);
     }
@@ -16,26 +16,26 @@ const LoveMessage = () => {
   
   // Set up interval to change messages
   useEffect(() => {
+    if (!config?.messages?.loveMessages?.length) return;
+    
     const interval = setInterval(() => {
       // Fade out
       setOpacity(0);
       
       setTimeout(() => {
         // Change message
-        if (config.messages.loveMessages.length > 0) {
-          let newMessage = message;
-          // Make sure we don't get the same message twice
-          while (newMessage === message) {
-            const randomIndex = Math.floor(Math.random() * config.messages.loveMessages.length);
-            newMessage = config.messages.loveMessages[randomIndex];
-          }
-          setMessage(newMessage);
+        let newMessage = message;
+        // Make sure we don't get the same message twice
+        while (newMessage === message) {
+          const randomIndex = Math.floor(Math.random() * config.messages.loveMessages.length);
+          newMessage = config.messages.loveMessages[randomIndex];
         }
+        setMessage(newMessage);
         
         // Fade in
         setOpacity(1);
       }, 1000);
-    }, config.advanced.randomMessageInterval || 10000);
+    }, config?.advanced?.randomMessageInterval || 10000);
     
     // Clean up interval on unmount
     return () => clearInterval(interval);
